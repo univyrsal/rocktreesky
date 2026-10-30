@@ -23,13 +23,13 @@ ACCENT_COLOR = "#6ABF4B"
 The background of the thermometer + pay panel.
 
 ```js
-PANEL_COLOR = "#6ABF4B"
+PANEL_COLOR = "#FCFBF5"
 ```
 
 The page's background color, behind the info.
 
 ```js
-BACKGROUND_COLOR = "#F6F3EE"
+BACKGROUND_COLOR = "#CCCCCC"
 ```
 
 ## Fonts
@@ -109,4 +109,44 @@ How wide the pay widget's column is.
 
 ```js
 PAY_PANEL_WIDTH = 420
+```
+
+## Page text and pictures
+
+The words on the page live in `content.md`, next to this file. Open it in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
+
+How to write it:
+
+- The first line, starting with `# `, is the page's big title. The paragraph right under it is shown a little lighter, as a tagline.
+- Leave an empty line between paragraphs. Each extra empty line adds a line's worth of space.
+- `# Words` on its own line is a heading. `## Words` is a centered heading, and the lines right under it are centered too (good for a name with a photo).
+- `**bold**`, `*italic*`, `***both***`.
+- `[words people click](https://example.com)` is a link.
+- `- item` makes a bulleted list, `1. item` a numbered list, and `1) item` numbered steps, each number in an accent-colored circle.
+- `->` on its own line starts centering everything after it, `<-` on its own line stops. Or put `-> one line <-` on a line by itself.
+- A `\` in front of a character shows it as it is, for example `\*` for a real asterisk.
+
+Pictures:
+
+- Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in `content.md`. The words in the square brackets are read aloud to people who can't see the picture.
+- On a line of its own, a picture sits by itself, centered.
+- A picture from another website works too, as long as its address starts with `https://`.
+- Keep pictures under about 500 KB each (around 1500 pixels wide is plenty) so the page loads fast.
+
+Widest a picture can be, in pixels. The text column is 720 wide, so 720 fills it.
+
+```js
+PICTURE_WIDTH = 720
+```
+
+How tall pictures are, in pixels. 0 lets each picture keep its own shape. Any other number makes every picture that tall: it fills the width and the height, taking the middle of the picture if the shape doesn't match, so a row of headshots all line up.
+
+```js
+PICTURE_HEIGHT = 0
+```
+
+How rounded the corners of pictures are, in pixels. 0 is square corners.
+
+```js
+PICTURE_CORNER_RADIUS = 12
 ```

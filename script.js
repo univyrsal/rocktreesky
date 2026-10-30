@@ -89,6 +89,7 @@ const scale = document.querySelector('.scale');
 const raisedEl = document.querySelector('.raised');
 const goalEl = document.querySelector('.goal');
 const donorsEl = document.querySelector('.donors');
+const content = document.querySelector('.content');
 
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
@@ -99,6 +100,26 @@ function applySettings() {
   root.style.setProperty('--fill-duration', setting('FILL_ANIMATION_MS', 1600) + 'ms');
   sidebar.classList.toggle('scrolls', !setting('STAY_IN_PLACE', true));
   document.body.classList.toggle('panel-right', setting('PANEL_SIDE', 'right') !== 'left');
+
+  root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
+  // 0 = as tall as the picture works out; any other number sets the height.
+  const pictureHeight = Math.max(0, setting('PICTURE_HEIGHT', 0));
+  root.style.setProperty('--picture-height', pictureHeight + 'px');
+  content.classList.toggle('set-picture-height', pictureHeight > 0);
+  root.style.setProperty('--picture-radius', Math.max(0, setting('PICTURE_CORNER_RADIUS', 12)) + 'px');
+}
+
+// The page text, from content.md. A # heading on the very first line is the
+// page's big title; everything else goes through markdownToHtml (markdown.js).
+function loadContent() {
+  return fetch('content.md', { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))))
+    .then((md) => {
+      let title = '';
+      md = md.replace(/^\s*#\s+(.+?)\s*#*\s*(\n|$)/, (all, words) => { title = words; return ''; });
+      content.innerHTML = (title ? '<h1>' + markdownToHtml(title).replace(/^<p>|<\/p>$/g, '') + '</h1>\n' : '') + markdownToHtml(md);
+    })
+    .catch((err) => console.warn('content.md could not be loaded (' + err.message + '); showing the text in index.html instead.'));
 }
 
 function countUp(to, duration) {
@@ -152,6 +173,8 @@ function render({ raised = 0, goal = setting('DEFAULT_GOAL', 10000), donors = 0 
 const progress = fetch(`progress.json?t=${Date.now()}`)
   .then((res) => (res.ok ? res.json() : {}))
   .catch(() => ({}));
+
+loadContent();
 
 loadSettings().then(() => {
   loadFonts();

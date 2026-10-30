@@ -4,7 +4,8 @@ A single fundraising page hosted on GitHub Pages: a thermometer tracking progres
 
 ## Files
 
-- `index.html`, `style.css`, `script.js`: the page
+- `index.html`, `style.css`, `script.js`, `markdown.js`: the page
+- `content.md`: the page text (pictures go in `images/`; how to write it is in `settings.md`)
 - `settings.md`: colors, sizes and toggles you can edit (see the notes inside)
 - `progress.json`: raised / goal / donors, read by the thermometer
 - `scripts/fetch-progress.mjs` + `.github/workflows/update-progress.yml`: every 15 minutes, pulls the total from Givebutter and commits `progress.json` if it changed
