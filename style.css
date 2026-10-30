@@ -5,6 +5,7 @@
   --muted: #5f6b66;
   --stone: #dcd6cc;
   --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
+  --panel: #6abf4b;               /* settings.md: PANEL_COLOR */
   --thermometer-width: 56px;      /* settings.md: THERMOMETER_WIDTH */
   --pay-width: 420px;             /* settings.md: PAY_PANEL_WIDTH */
   --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
@@ -48,7 +49,7 @@ body {
   height: 100vh;
   height: 100dvh;
   padding: 32px;
-  background: var(--accent);
+  background: var(--panel);
   /* Grey text is hard to read on the accent, so it uses the main text color */
   --muted: var(--text);
 }
@@ -216,8 +217,8 @@ h1 {
     order: 1;
     height: 420px;
     padding: 32px 16px 32px 88px;
-    background: var(--accent);
+    background: var(--panel);
   }
   .info { order: 2; max-width: none; padding: 40px 16px 24px; }
-  .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--accent); }
+  .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--panel); }
 }

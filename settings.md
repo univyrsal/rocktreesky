@@ -14,10 +14,16 @@ Sizes are in screen pixels at normal zoom. 96 pixels is about 1 inch.
 
 ## Colors
 
-The accent color is the background of the thermometer + pay panel, and fills the thermometer and its bulb.
+The accent color fills the thermometer and its bulb.
 
 ```js
 ACCENT_COLOR = "#6ABF4B"
+```
+
+The background of the thermometer + pay panel.
+
+```js
+PANEL_COLOR = "#6ABF4B"
 ```
 
 The page's background color, behind the info.

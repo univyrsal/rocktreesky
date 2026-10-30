@@ -92,6 +92,7 @@ const donorsEl = document.querySelector('.donors');
 
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
+  root.style.setProperty('--panel', setting('PANEL_COLOR', '#6ABF4B'));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
