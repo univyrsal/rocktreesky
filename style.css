@@ -1,13 +1,15 @@
+/* Values marked "settings.md" are overwritten from there once it loads */
 :root {
   --bg: #f6f3ee;
   --text: #22302b;
   --muted: #5f6b66;
-  --stone: #d9d3c9;
-  --tree: #2f6b4f;
-  --sky: #6fa8d6;
-  --tube-height: 34px;
-  --bulb-size: 64px;
-  --fill-duration: 1.6s;
+  --stone: #dcd6cc;
+  --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
+  --thermometer-width: 56px;      /* settings.md: THERMOMETER_WIDTH */
+  --pay-width: 420px;             /* settings.md: PAY_PANEL_WIDTH */
+  --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
+  --bulb-size: calc(var(--thermometer-width) * 1.9);
+  --tube-border: 10px;
 }
 
 * { box-sizing: border-box; }
@@ -16,116 +18,181 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 400 1.0625rem/1.6 "Inter", system-ui, sans-serif;
+  font: 400 1.0625rem/1.65 "Inter", system-ui, sans-serif;
 }
 
-main {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 48px 16px 80px;
-}
-
-h1 {
-  margin: 0;
-  font: 600 clamp(2.25rem, 7vw, 3.5rem)/1.1 "Fraunces", Georgia, serif;
-  text-align: center;
-}
-
-.tagline {
-  margin: 8px 0 36px;
-  text-align: center;
-  color: var(--muted);
-}
-
-/* Thermometer: a round bulb on the left, a tube that fills to the right */
-.thermometer {
+.layout {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.bulb {
+/* Left panel: pinned to the screen while the page scrolls */
+.sidebar {
+  position: sticky;
+  top: 0;
   flex: none;
-  width: var(--bulb-size);
-  height: var(--bulb-size);
-  border-radius: 50%;
-  background: var(--stone);
-  padding: 8px;
-  position: relative;
-  z-index: 1;
+  display: flex;
+  gap: 32px;
+  height: 100vh;
+  height: 100dvh;
+  padding: 32px;
+  border-right: 1px solid var(--stone);
 }
 
-.bulb-fill {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: var(--tree);
+.sidebar.scrolls {
+  position: static;
 }
 
-.tube {
-  flex: 1;
-  height: var(--tube-height);
-  margin-left: -12px;
-  border-radius: 0 999px 999px 0;
-  background: var(--stone);
-  position: relative;
-  overflow: hidden;
-}
-
-.fill {
-  position: absolute;
-  inset: 8px auto 8px 0;
-  width: 0;
-  border-radius: 0 999px 999px 0;
-  background: linear-gradient(90deg, var(--tree), #3f8a66);
-  transition: width var(--fill-duration) cubic-bezier(.22, .8, .24, 1);
-}
-
-.ticks {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg,
-    transparent 0 calc(25% - 1px),
-    rgba(34, 48, 43, .18) calc(25% - 1px) 25%);
-  pointer-events: none;
+/* Thermometer column */
+.meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+  padding-left: 72px;   /* room for the scale labels */
 }
 
 .totals {
-  margin-top: 20px;
+  margin-bottom: 24px;
   text-align: center;
 }
 
 .totals p { margin: 0; }
 
 .raised {
-  font: 600 1.75rem/1.2 "Fraunces", Georgia, serif;
-  color: var(--tree);
+  font: 600 2.25rem/1.1 "Fraunces", Georgia, serif;
   font-variant-numeric: tabular-nums;
 }
 
 .goal { font-weight: 600; }
 
 .donors {
-  margin-top: 4px !important;
+  margin-top: 2px !important;
   color: var(--muted);
   font-size: .9375rem;
 }
 
-.about {
-  margin: 56px 0 40px;
+/* Tall tube that fills upward, with the bulb at the bottom */
+.thermometer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tube {
+  flex: 1;
+  min-height: 0;
+  width: var(--thermometer-width);
+  margin-bottom: calc(var(--tube-border) * -2);
+  border-radius: 999px 999px 0 0;
+  background: var(--stone);
+  position: relative;
+}
+
+.track {
+  position: absolute;
+  inset: var(--tube-border) var(--tube-border) 0;
+}
+
+.fill {
+  position: absolute;
+  inset: auto 0 0;
+  height: 0;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent), #fff 25%) 45%, var(--accent));
+  transition: height var(--fill-duration) cubic-bezier(.22, .8, .24, 1);
+}
+
+.bulb {
+  flex: none;
+  position: relative;
+  width: var(--bulb-size);
+  height: var(--bulb-size);
+  padding: var(--tube-border);
+  border-radius: 50%;
+  background: var(--stone);
+}
+
+.bulb-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--accent), #fff 30%), var(--accent) 60%);
+}
+
+/* Dollar marks along the left of the tube */
+.scale {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mark {
+  position: absolute;
+  left: calc(var(--tube-border) * -1);
+  width: calc(100% + var(--tube-border));
+  border-top: 2px solid rgba(34, 48, 43, .22);
+}
+
+.mark span {
+  position: absolute;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: .8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pay widget column */
+.donate {
+  width: var(--pay-width);
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .widget-placeholder {
-  padding: 48px 16px;
+  height: 100%;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  padding: 16px;
   border: 2px dashed var(--stone);
   border-radius: 12px;
-  text-align: center;
   color: var(--muted);
 }
 
-@media (max-width: 480px) {
-  :root {
-    --tube-height: 26px;
-    --bulb-size: 50px;
+/* Right side: the info */
+.info {
+  flex: 1;
+  min-width: 0;
+  max-width: 720px;
+  padding: 56px 48px 120px;
+}
+
+h1 {
+  margin: 0;
+  font: 600 clamp(2.25rem, 4vw, 3.5rem)/1.1 "Fraunces", Georgia, serif;
+}
+
+.tagline {
+  margin: 8px 0 32px;
+  color: var(--muted);
+}
+
+/* Narrow screens: no room for side-by-side, so stack:
+   thermometer, then the info, then the pay widget right after it */
+@media (max-width: 1000px) {
+  .layout { display: flex; flex-direction: column; align-items: stretch; }
+  .sidebar { display: contents; }
+  .meter {
+    order: 1;
+    height: 420px;
+    padding: 32px 16px 0 88px;
   }
-  main { padding-top: 32px; }
+  .info { order: 2; max-width: none; padding: 40px 16px 24px; }
+  .donate { order: 3; width: auto; padding: 0 16px 48px; overflow: visible; }
 }

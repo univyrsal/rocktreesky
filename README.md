@@ -5,6 +5,7 @@ A single fundraising page hosted on GitHub Pages: a thermometer tracking progres
 ## Files
 
 - `index.html`, `style.css`, `script.js`: the page
+- `settings.md`: colors, sizes and toggles you can edit (see the notes inside)
 - `progress.json`: raised / goal / donors, read by the thermometer
 - `scripts/fetch-progress.mjs` + `.github/workflows/update-progress.yml`: every 15 minutes, pulls the total from Givebutter and commits `progress.json` if it changed
 
@@ -22,4 +23,4 @@ A single fundraising page hosted on GitHub Pages: a thermometer tracking progres
 
 - The total is Givebutter's `raised` figure, so donor tips (which go to Givebutter) aren't counted toward the goal.
 - GitHub may delay scheduled runs by a few minutes, and pauses schedules on repos with no activity for 60 days (the bot's own commits count as activity).
-- The goal comes from the Givebutter campaign once synced; `DEFAULT_GOAL` in `script.js` is only a fallback.
+- The goal comes from the Givebutter campaign once synced; `DEFAULT_GOAL` in `settings.md` is only a fallback.
