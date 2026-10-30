@@ -87,7 +87,7 @@ const thermometer = document.querySelector('.thermometer');
 const fill = document.querySelector('.fill');
 const scale = document.querySelector('.scale');
 const raisedEl = document.querySelector('.raised');
-const goalEl = document.querySelector('.goal');
+const labelEl = document.querySelector('.raised-label');
 const donorsEl = document.querySelector('.donors');
 const content = document.querySelector('.content');
 
@@ -100,6 +100,7 @@ function applySettings() {
   if (colors.length === 1) colors.push(colors[0]);
   root.style.setProperty('--fill-colors', colors.join(', '));
   root.style.setProperty('--bulb-color', colors[0]);
+  thermometer.classList.toggle('flat', !setting('THERMOMETER_SHINE', true));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
@@ -189,7 +190,8 @@ function drawScale(goal) {
 
 function render({ raised = 0, goal = setting('DEFAULT_GOAL', 10000), donors = 0 }) {
   shownGoal = goal;
-  goalEl.textContent = money.format(goal);
+  // RAISED_LABEL: the line under the amount; {goal} becomes the goal amount
+  labelEl.textContent = String(setting('RAISED_LABEL', 'raised of {goal}')).split('{goal}').join(money.format(goal));
   thermometer.setAttribute('aria-valuemax', goal);
   if (donors > 0) donorsEl.textContent = `${donors} ${donors === 1 ? 'donor' : 'donors'}`;
   drawScale(goal);
@@ -201,10 +203,6 @@ function render({ raised = 0, goal = setting('DEFAULT_GOAL', 10000), donors = 0 
 // Only changes what this browser shows; the real total is untouched.
 function startTestMode() {
   const track = document.querySelector('.track');
-  const note = document.createElement('p');
-  note.className = 'test-note';
-  note.textContent = 'Test mode: click or drag the thermometer';
-  document.querySelector('.totals').appendChild(note);
   thermometer.classList.add('testing');
 
   const amountAt = (y) => {

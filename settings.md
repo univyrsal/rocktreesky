@@ -69,6 +69,12 @@ The goal shown before the first Givebutter sync. Once the GitHub Action has sync
 DEFAULT_GOAL = 10000
 ```
 
+The line under the big dollar amount. `{goal}` is replaced with the goal amount (for example $10,000), so `"raised of {goal}"` shows "raised of $10,000". Leave `{goal}` out to show just your own words, or use `""` for no line at all.
+
+```js
+RAISED_LABEL = "raised of {goal}"
+```
+
 How far apart the dollar marks along the tube are. `2500` puts marks at $2,500, $5,000, $7,500 and $10,000. `0` hides them.
 
 ```js
@@ -79,10 +85,16 @@ The colors inside the thermometer, as a list from the bottom up. The first color
 
 ```js
 THERMOMETER_COLORS = [
-  "#6ABF4B",   // 1: bottom (and the bulb)
-  "#6ABF4B",   // 2: middle
-  "#6ABF4B",   // 3: top
+  "#FF4124",   // 1: bottom (and the bulb)
+  "#FFF024",   // 2: middle
+  "#8CF94D",   // 3: top
 ]
+```
+
+A light shine down the middle of the tube and a highlight on the bulb, which make them look round (`true`), or flat color (`false`).
+
+```js
+THERMOMETER_SHINE = false
 ```
 
 How wide the tube is. The bulb at the bottom grows with it.
@@ -163,7 +175,7 @@ PICTURE_CORNER_RADIUS = 12
 
 ## Testing
 
-Test mode lets you click or drag up and down on the thermometer to see how it looks at different amounts. It only changes what your own browser shows: the real total in `progress.json` isn't touched, and reloading the page goes back to it. While it's on, a small "Test mode" note shows under the total, so remember to turn it off (`false`) before the page goes live.
+Test mode lets you click or drag up and down on the thermometer to see how it looks at different amounts. It only changes what your own browser shows: the real total in `progress.json` isn't touched, and reloading the page goes back to it. Remember to turn it off (`false`) before the page goes live.
 
 ```js
 TEST_MODE = true
