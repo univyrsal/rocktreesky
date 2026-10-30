@@ -47,9 +47,15 @@ ANIMATE_ON_LOAD = true
 FILL_ANIMATION_MS = 1600
 ```
 
-## The left panel
+## The thermometer + pay panel
 
-- `true` = the thermometer and pay widget stay in place on the screen while the info on the right scrolls.
+Which side of the screen the thermometer and pay widget sit on: `"right"` (the info is read first, then the pay form is right beside it) or `"left"` (the goal is the first thing people see).
+
+```js
+PANEL_SIDE = "right"
+```
+
+- `true` = the thermometer and pay widget stay in place on the screen while the info scrolls.
 - `false` = they scroll away with the rest of the page.
 
 On narrow screens (phones, small tablets) there isn't room for side-by-side, so the page always stacks: thermometer, then the info, then the pay widget.

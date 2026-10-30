@@ -10,9 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="panel-right">
   <div class="layout">
-    <!-- Left: thermometer + pay widget, stays in place while the info scrolls -->
+    <!-- Thermometer + pay widget, stays in place while the info scrolls
+         (which side it's on: PANEL_SIDE in settings.md) -->
     <aside class="sidebar">
       <!-- Numbers come from progress.json (updated by the GitHub Action) -->
       <section class="meter" aria-label="Fundraising progress">
@@ -39,7 +40,7 @@
       </section>
     </aside>
 
-    <!-- Right: the info, scrolls normally -->
+    <!-- The info, scrolls normally -->
     <main class="info">
       <h1>Rock Tree Sky</h1>
       <p class="tagline">Help us reach our goal.</p>

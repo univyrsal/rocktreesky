@@ -26,7 +26,12 @@ body {
   align-items: flex-start;
 }
 
-/* Left panel: pinned to the screen while the page scrolls */
+/* Panel on the right instead of the left (settings.md: PANEL_SIDE) */
+.panel-right .layout {
+  flex-direction: row-reverse;
+}
+
+/* Thermometer + pay panel: pinned to the screen while the page scrolls */
 .sidebar {
   position: sticky;
   top: 0;
@@ -37,6 +42,11 @@ body {
   height: 100dvh;
   padding: 32px;
   border-right: 1px solid var(--stone);
+}
+
+.panel-right .sidebar {
+  border-right: 0;
+  border-left: 1px solid var(--stone);
 }
 
 .sidebar.scrolls {
@@ -165,12 +175,24 @@ body {
   color: var(--muted);
 }
 
-/* Right side: the info */
+/* The info */
 .info {
   flex: 1;
   min-width: 0;
   max-width: 720px;
   padding: 56px 48px 120px;
+}
+
+/* With the panel on the right, the text column sits centered in the space
+   left of it, rather than starting partway across a wide screen */
+.panel-right .info {
+  max-width: none;
+}
+
+.panel-right .info > * {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1 {
@@ -186,7 +208,7 @@ h1 {
 /* Narrow screens: no room for side-by-side, so stack:
    thermometer, then the info, then the pay widget right after it */
 @media (max-width: 1000px) {
-  .layout { display: flex; flex-direction: column; align-items: stretch; }
+  .layout, .panel-right .layout { display: flex; flex-direction: column; align-items: stretch; }
   .sidebar { display: contents; }
   .meter {
     order: 1;

@@ -43,6 +43,7 @@ function applySettings() {
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
   root.style.setProperty('--fill-duration', setting('FILL_ANIMATION_MS', 1600) + 'ms');
   sidebar.classList.toggle('scrolls', !setting('STAY_IN_PLACE', true));
+  document.body.classList.toggle('panel-right', setting('PANEL_SIDE', 'right') !== 'left');
 }
 
 function countUp(to, duration) {
