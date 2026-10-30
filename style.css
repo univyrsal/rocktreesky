@@ -10,6 +10,10 @@
   --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
   --bulb-size: calc(var(--thermometer-width) * 1.9);
   --tube-border: 10px;
+  --heading-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;  /* settings.md: HEADING_FONT */
+  --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
+  --body-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;     /* settings.md: BODY_FONT */
+  --body-weight: 700;                                                 /* settings.md: BODY_WEIGHT */
 }
 
 * { box-sizing: border-box; }
@@ -18,7 +22,10 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 400 1.0625rem/1.65 "Inter", system-ui, sans-serif;
+  font-family: var(--body-font);
+  font-weight: var(--body-weight);
+  font-size: 1.0625rem;
+  line-height: 1.65;
 }
 
 .layout {
@@ -70,11 +77,10 @@ body {
 .totals p { margin: 0; }
 
 .raised {
-  font: 600 2.25rem/1.1 "Fraunces", Georgia, serif;
+  font: var(--heading-weight) 2.25rem/1.1 var(--heading-font);
   font-variant-numeric: tabular-nums;
 }
 
-.goal { font-weight: 600; }
 
 .donors {
   margin-top: 2px !important;
@@ -152,7 +158,6 @@ body {
   transform: translateY(-50%);
   color: var(--muted);
   font-size: .8125rem;
-  font-weight: 500;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
@@ -197,7 +202,7 @@ body {
 
 h1 {
   margin: 0;
-  font: 600 clamp(2.25rem, 4vw, 3.5rem)/1.1 "Fraunces", Georgia, serif;
+  font: var(--heading-weight) clamp(2.25rem, 4vw, 3.5rem)/1.1 var(--heading-font);
 }
 
 .tagline {

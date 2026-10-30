@@ -20,6 +20,35 @@ The accent color fills the thermometer and its bulb.
 ACCENT_COLOR = "#6ABF4B"
 ```
 
+## Fonts
+
+The font for headings (the page title and the big dollar amount) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.
+
+```js
+HEADING_FONT = "Gotham Rounded"
+HEADING_WEIGHT = 700
+
+BODY_FONT = "Gotham Rounded"
+BODY_WEIGHT = 700
+```
+
+Where fonts come from:
+
+- Any font on [Google Fonts](https://fonts.google.com) works just by typing its name above.
+- Any other font (like Gotham Rounded, which is sold by Hoefler&Co and isn't on Google Fonts) needs its font file in the `fonts` folder, listed here with its name and weight. `.woff2` files are smallest and load fastest; `.woff`, `.otf` and `.ttf` work too. Add one line per file, for example a second line with `weight: 400` for a regular file.
+
+```js
+FONT_FILES = [
+  { family: "Gotham Rounded", weight: 700, file: "fonts/GothamRounded-Bold.woff2" },
+]
+```
+
+The font shown while the main font loads, or instead of it if it can't be found (for example before its file is in the `fonts` folder). Nunito is a free rounded font from Google Fonts that looks similar to Gotham Rounded. If a font doesn't load, the browser console says which one and why.
+
+```js
+FALLBACK_FONT = "Nunito"
+```
+
 ## The thermometer
 
 The goal shown before the first Givebutter sync. Once the GitHub Action has synced, the goal set on the Givebutter campaign is used instead, so change it there too.

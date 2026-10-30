@@ -22,6 +22,59 @@ function setting(name, fallback) {
   return value;
 }
 
+// Fonts named in FONT_FILES are loaded from those files; any other font is
+// fetched from Google Fonts. FALLBACK_FONT stands in while a font loads, or
+// for good if it can't be found.
+function loadFonts() {
+  const fallback = setting('FALLBACK_FONT', 'Nunito');
+  const heading = { family: setting('HEADING_FONT', 'Gotham Rounded'), weight: setting('HEADING_WEIGHT', 700) };
+  const body = { family: setting('BODY_FONT', 'Gotham Rounded'), weight: setting('BODY_WEIGHT', 700) };
+  const files = setting('FONT_FILES', []).filter((f) => f && f.family && f.file);
+  const fromFile = new Set(files.map((f) => f.family));
+
+  if (files.length) {
+    const style = document.createElement('style');
+    style.textContent = files.map((f) => `@font-face {
+      font-family: "${f.family}";
+      src: url("${encodeURI(f.file)}");
+      font-weight: ${f.weight || 400};
+      font-display: swap;
+    }`).join('\n');
+    document.head.appendChild(style);
+  }
+
+  // One request per Google family, so a name Google doesn't have can't
+  // take the others down with it
+  const google = new Map();
+  for (const want of [heading, body, { family: fallback, weight: heading.weight }, { family: fallback, weight: body.weight }]) {
+    if (!want.family || fromFile.has(want.family)) continue;
+    if (!google.has(want.family)) google.set(want.family, new Set());
+    google.get(want.family).add(want.weight);
+  }
+  for (const [family, weights] of google) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${[...weights].sort((a, b) => a - b).join(';')}&display=swap`;
+    document.head.appendChild(link);
+  }
+
+  const stack = (family) => [family, fallback].filter(Boolean).map((f) => `"${f}"`).join(', ') + ', system-ui, sans-serif';
+  root.style.setProperty('--heading-font', stack(heading.family));
+  root.style.setProperty('--heading-weight', heading.weight);
+  root.style.setProperty('--body-font', stack(body.family));
+  root.style.setProperty('--body-weight', body.weight);
+
+  // Say so in the console if a font didn't turn up, rather than quietly
+  // showing the fallback
+  // (A missing file makes load() fail outright; a name Google doesn't have
+  // just finds no faces.)
+  for (const { family, weight } of [...new Map([heading, body].map((f) => [`${f.family} ${f.weight}`, f])).values()]) {
+    const warn = () => console.warn(`Font "${family}" (weight ${weight}) didn't load, so "${fallback}" is showing instead. ` +
+      (fromFile.has(family) ? 'Check that its file is in the fonts folder and the path in FONT_FILES in settings.md matches.' : 'It isn\'t on Google Fonts; add its file to FONT_FILES in settings.md.'));
+    document.fonts.load(`${weight} 1em "${family}"`).then((faces) => { if (!faces.length) warn(); }, warn);
+  }
+}
+
 const money = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -99,6 +152,7 @@ const progress = fetch(`progress.json?t=${Date.now()}`)
   .catch(() => ({}));
 
 loadSettings().then(() => {
+  loadFonts();
   applySettings();
   return progress;
 }).then(render);
