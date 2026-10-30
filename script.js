@@ -122,15 +122,45 @@ function loadContent() {
     .catch((err) => console.warn('content.md could not be loaded (' + err.message + '); showing the text in index.html instead.'));
 }
 
-function countUp(to, duration) {
+// What the thermometer is showing right now
+let shownGoal = 10000;
+let shownRaised = 0;
+let countRun = 0;
+
+function countUp(from, to, duration) {
+  const run = ++countRun; // a newer count-up stops this one
   const start = performance.now();
   function frame(now) {
+    if (run !== countRun) return;
     const t = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - t, 3);
-    raisedEl.textContent = money.format(Math.round(to * eased));
+    raisedEl.textContent = money.format(Math.round(from + (to - from) * eased));
     if (t < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  return run;
+}
+
+// Fill the thermometer to an amount, gliding there or jumping straight there
+function showRaised(raised, animate) {
+  const pct = Math.min(raised / shownGoal, 1) * 100;
+  const from = shownRaised;
+  shownRaised = raised;
+  thermometer.setAttribute('aria-valuenow', raised);
+  thermometer.setAttribute('aria-valuetext', `${money.format(raised)} of ${money.format(shownGoal)}`);
+
+  if (!animate) {
+    countRun++;
+    fill.style.transition = 'none';
+    fill.style.height = `${pct}%`;
+    raisedEl.textContent = money.format(raised);
+    return;
+  }
+  fill.style.transition = '';
+  const run = countUp(from, raised, setting('FILL_ANIMATION_MS', 1600));
+  // Next frame so the height transition actually runs, unless something
+  // newer (a drag in test mode) has already moved it on
+  requestAnimationFrame(() => { if (run === countRun) fill.style.height = `${pct}%`; });
 }
 
 function drawScale(goal) {
@@ -147,26 +177,44 @@ function drawScale(goal) {
 }
 
 function render({ raised = 0, goal = setting('DEFAULT_GOAL', 10000), donors = 0 }) {
-  const pct = Math.min(raised / goal, 1) * 100;
-  const animate = setting('ANIMATE_ON_LOAD', true);
-  const duration = setting('FILL_ANIMATION_MS', 1600);
-
+  shownGoal = goal;
   goalEl.textContent = money.format(goal);
   thermometer.setAttribute('aria-valuemax', goal);
-  thermometer.setAttribute('aria-valuenow', raised);
-  thermometer.setAttribute('aria-valuetext', `${money.format(raised)} of ${money.format(goal)}`);
   if (donors > 0) donorsEl.textContent = `${donors} ${donors === 1 ? 'donor' : 'donors'}`;
   drawScale(goal);
+  showRaised(raised, setting('ANIMATE_ON_LOAD', true));
+  if (setting('TEST_MODE', false)) startTestMode();
+}
 
-  if (!animate) {
-    fill.style.transition = 'none';
-    fill.style.height = `${pct}%`;
-    raisedEl.textContent = money.format(raised);
-    return;
-  }
-  // Next frame so the height transition actually runs
-  requestAnimationFrame(() => { fill.style.height = `${pct}%`; });
-  countUp(raised, duration);
+// TEST_MODE: click or drag on the thermometer to try out different amounts.
+// Only changes what this browser shows; the real total is untouched.
+function startTestMode() {
+  const track = document.querySelector('.track');
+  const note = document.createElement('p');
+  note.className = 'test-note';
+  note.textContent = 'Test mode: click or drag the thermometer';
+  document.querySelector('.totals').appendChild(note);
+  thermometer.classList.add('testing');
+
+  const amountAt = (y) => {
+    const box = track.getBoundingClientRect();
+    const pct = Math.min(Math.max((box.bottom - y) / box.height, 0), 1);
+    const step = Math.max(1, setting('TEST_MODE_STEP', 50));
+    return Math.min(Math.round((shownGoal * pct) / step) * step, shownGoal);
+  };
+  let dragging = false;
+  thermometer.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    thermometer.setPointerCapture(e.pointerId);
+    showRaised(amountAt(e.clientY), true);
+    e.preventDefault();
+  });
+  thermometer.addEventListener('pointermove', (e) => {
+    if (dragging) showRaised(amountAt(e.clientY), false);
+  });
+  const stop = () => { dragging = false; };
+  thermometer.addEventListener('pointerup', stop);
+  thermometer.addEventListener('pointercancel', stop);
 }
 
 // Cache-bust: GitHub Pages caches files for ~10 minutes

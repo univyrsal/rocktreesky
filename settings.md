@@ -150,3 +150,17 @@ How rounded the corners of pictures are, in pixels. 0 is square corners.
 ```js
 PICTURE_CORNER_RADIUS = 12
 ```
+
+## Testing
+
+Test mode lets you click or drag up and down on the thermometer to see how it looks at different amounts. It only changes what your own browser shows: the real total in `progress.json` isn't touched, and reloading the page goes back to it. While it's on, a small "Test mode" note shows under the total, so remember to turn it off (`false`) before the page goes live.
+
+```js
+TEST_MODE = true
+```
+
+When you click or drag, the amount is rounded to the nearest this many dollars.
+
+```js
+TEST_MODE_STEP = 50
+```

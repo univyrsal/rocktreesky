@@ -1,5 +1,5 @@
-# Rock Tree Sky
+# College Tour
 
-Help us reach our goal.
+![college tour route](images/California_college_route_wide.png)
 
-Tell people what the money is for and why it matters. A few sentences is plenty.
+We plan to visit UC Santa Cruz, San Jose State, Standford, and UC Berkeley. (write more)

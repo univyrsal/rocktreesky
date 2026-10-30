@@ -136,6 +136,19 @@ body {
   background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--accent), #fff 30%), var(--accent) 60%);
 }
 
+/* TEST_MODE: the thermometer can be clicked or dragged */
+.thermometer.testing {
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.test-note {
+  margin-top: 6px !important;
+  font-size: .75rem;
+  opacity: .7;
+}
+
 /* Dollar marks along the left of the tube */
 .scale {
   position: absolute;
