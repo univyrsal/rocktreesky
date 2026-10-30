@@ -110,15 +110,23 @@ body {
   inset: var(--tube-border) var(--tube-border) 0;
 }
 
+/* The tube's colors (settings.md: THERMOMETER_COLORS) run bottom to top over
+   the whole tube, and the fill uncovers them as it rises: the gradient is
+   sized to the full track (--track-height, set by script.js), not the fill. */
 .fill {
   position: absolute;
   inset: auto 0 0;
+  z-index: 1;               /* above the bulb's grey ring, so the two join */
   height: 0;
   border-radius: 999px 999px 0 0;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent), #fff 25%) 45%, var(--accent));
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, .25) 45%, transparent),
+    linear-gradient(to top, var(--fill-colors, var(--accent), var(--accent))) bottom / 100% var(--track-height, 100%) no-repeat;
   transition: height var(--fill-duration) cubic-bezier(.22, .8, .24, 1);
 }
 
+/* The grey of the bulb and the grey of the tube are one color, so they read
+   as one outline; the colored parts sit on top of both */
 .bulb {
   flex: none;
   position: relative;
@@ -130,10 +138,12 @@ body {
 }
 
 .bulb-fill {
+  position: relative;
+  z-index: 2;               /* above the bottom of the fill, so its curve shows */
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--accent), #fff 30%), var(--accent) 60%);
+  background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--bulb-color, var(--accent)), #fff 30%), var(--bulb-color, var(--accent)) 60%);
 }
 
 /* TEST_MODE: the thermometer can be clicked or dragged */
@@ -153,6 +163,7 @@ body {
 .scale {
   position: absolute;
   inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
 

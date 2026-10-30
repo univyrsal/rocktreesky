@@ -14,7 +14,7 @@ Sizes are in screen pixels at normal zoom. 96 pixels is about 1 inch.
 
 ## Colors
 
-The accent color fills the thermometer and its bulb.
+The accent color is used for the numbered-step circles in the page text. (The thermometer has its own colors, under "The thermometer" below.)
 
 ```js
 ACCENT_COLOR = "#6ABF4B"
@@ -73,6 +73,16 @@ How far apart the dollar marks along the tube are. `2500` puts marks at $2,500, 
 
 ```js
 SCALE_STEP = 2500
+```
+
+The colors inside the thermometer, as a list from the bottom up. The first color fills the bulb and the bottom of the tube, and fades into the second, which fades into the third, spaced evenly up the whole tube. So at the halfway mark you see the second color, and only a full thermometer shows the third. The list can be any length: one color for a solid fill, or more than three for more steps.
+
+```js
+THERMOMETER_COLORS = [
+  "#6ABF4B",   // 1: bottom (and the bulb)
+  "#6ABF4B",   // 2: middle
+  "#6ABF4B",   // 3: top
+]
 ```
 
 How wide the tube is. The bulb at the bottom grows with it.

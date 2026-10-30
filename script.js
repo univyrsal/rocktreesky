@@ -94,6 +94,12 @@ const content = document.querySelector('.content');
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
   root.style.setProperty('--panel', setting('PANEL_COLOR', '#6ABF4B'));
+  // Bottom to top, evenly spaced; the bulb is the first (bottom) color
+  let colors = setting('THERMOMETER_COLORS', []).filter((c) => typeof c === 'string' && c.trim());
+  if (!colors.length) colors = [setting('ACCENT_COLOR', '#6ABF4B')];
+  if (colors.length === 1) colors.push(colors[0]);
+  root.style.setProperty('--fill-colors', colors.join(', '));
+  root.style.setProperty('--bulb-color', colors[0]);
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
@@ -121,6 +127,11 @@ function loadContent() {
     })
     .catch((err) => console.warn('content.md could not be loaded (' + err.message + '); showing the text in index.html instead.'));
 }
+
+// The fill's colors are spread over the whole tube, so it needs the tube's height
+new ResizeObserver(([entry]) => {
+  fill.style.setProperty('--track-height', entry.contentRect.height + 'px');
+}).observe(document.querySelector('.track'));
 
 // What the thermometer is showing right now
 let shownGoal = 10000;
