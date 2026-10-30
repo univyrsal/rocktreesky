@@ -1,6 +1,6 @@
 /* Values marked "settings.md" are overwritten from there once it loads */
 :root {
-  --bg: #f6f3ee;
+  --bg: #f6f3ee;                  /* settings.md: BACKGROUND_COLOR */
   --text: #22302b;
   --muted: #5f6b66;
   --stone: #dcd6cc;
@@ -48,12 +48,9 @@ body {
   height: 100vh;
   height: 100dvh;
   padding: 32px;
-  border-right: 1px solid var(--stone);
-}
-
-.panel-right .sidebar {
-  border-right: 0;
-  border-left: 1px solid var(--stone);
+  background: var(--accent);
+  /* Grey text is hard to read on the accent, so it uses the main text color */
+  --muted: var(--text);
 }
 
 .sidebar.scrolls {
@@ -218,8 +215,9 @@ h1 {
   .meter {
     order: 1;
     height: 420px;
-    padding: 32px 16px 0 88px;
+    padding: 32px 16px 32px 88px;
+    background: var(--accent);
   }
   .info { order: 2; max-width: none; padding: 40px 16px 24px; }
-  .donate { order: 3; width: auto; padding: 0 16px 48px; overflow: visible; }
+  .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--accent); }
 }
