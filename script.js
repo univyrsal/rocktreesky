@@ -114,6 +114,9 @@ function applySettings() {
   root.style.setProperty('--picture-height', pictureHeight + 'px');
   content.classList.toggle('set-picture-height', pictureHeight > 0);
   root.style.setProperty('--picture-radius', Math.max(0, setting('PICTURE_CORNER_RADIUS', 12)) + 'px');
+  // {banner} pictures: 0 = their own shape; any other number crops them to that height
+  const bannerHeight = Math.max(0, setting('BANNER_HEIGHT', 0));
+  root.style.setProperty('--banner-height', bannerHeight > 0 ? bannerHeight + 'px' : 'auto');
 }
 
 // The page text, from content.md. A # heading on the very first line is the

@@ -152,6 +152,7 @@ Pictures:
 
 - Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in `content.md`. The words in the square brackets are read aloud to people who can't see the picture.
 - On a line of its own, a picture sits by itself, centered.
+- Add `{banner}` after it (`![words](images/x.jpg) {banner}`) to make it a banner: it runs the full width of the section, edge to edge, with square corners.
 - A picture from another website works too, as long as its address starts with `https://`.
 - Keep pictures under about 500 KB each (around 1500 pixels wide is plenty) so the page loads fast.
 
@@ -171,6 +172,12 @@ How rounded the corners of pictures are, in pixels. 0 is square corners.
 
 ```js
 PICTURE_CORNER_RADIUS = 12
+```
+
+How tall `{banner}` pictures are, in pixels. 0 lets each keep its own shape. Any other number crops it to that height, keeping the middle.
+
+```js
+BANNER_HEIGHT = 0
 ```
 
 ## Testing

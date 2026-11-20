@@ -108,8 +108,13 @@ function markdownToHtml(md) {
       continue;
     }
     if ((m = line.match(/^#{1,6}\s+(.*?)\s*#*$/))) { flushAll(); spaceOut(); centered = false; out.push('<h3' + middle() + '>' + inline(m[1]) + '</h3>'); continue; }
-    // A picture on a line of its own sits on its own, centered.
-    if (/^!\[[^\]]*\]\([^)\s]+\)$/.test(line)) { flushAll(); spaceOut(); out.push('<p class="picture">' + inline(line) + '</p>'); continue; }
+    // A picture on a line of its own sits on its own, centered. With {banner}
+    // after it, it runs the full width of the section, edge to edge.
+    if ((m = line.match(/^(!\[[^\]]*\]\([^)\s]+\))(\s*\{banner\})?$/i))) {
+      flushAll(); spaceOut();
+      out.push('<p class="picture' + (m[2] ? ' banner' : '') + '">' + inline(m[1]) + '</p>');
+      continue;
+    }
     // Something built separately, named between exclamation marks on a line
     // of its own (!map!). It stands apart from the words around it whether
     // or not a blank line was left before it. A name nothing is listed

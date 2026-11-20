@@ -11,6 +11,7 @@
   --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
   --bulb-size: calc(var(--thermometer-width) * 1.9);
   --tube-border: 10px;
+  --info-pad: 48px;               /* space either side of the text */
   --heading-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;  /* settings.md: HEADING_FONT */
   --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
   --body-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;     /* settings.md: BODY_FONT */
@@ -210,7 +211,8 @@ body {
   flex: 1;
   min-width: 0;
   max-width: 720px;
-  padding: 56px 48px 120px;
+  padding: 56px var(--info-pad) 120px;
+  container-type: inline-size;  /* so a banner knows how wide the section is */
 }
 
 /* With the panel on the right, the text column sits centered in the space
@@ -327,6 +329,27 @@ h1 {
   border-radius: var(--picture-radius, 12px);
 }
 
+/* {banner} after a picture: it runs the full width of the section, past
+   the text column and its side padding, with square corners.
+   (100cqw is the section's width inside its padding.) */
+.content p.picture.banner {
+  width: calc(100cqw + 2 * var(--info-pad));
+  max-width: none;
+  margin-left: calc(50% - 50cqw - var(--info-pad));
+  margin-right: 0;
+}
+
+.content p.picture.banner .md-image,
+.content.set-picture-height p.picture.banner .md-image {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: var(--banner-height, auto);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
 /* PICTURE_HEIGHT: every picture the same height, filling it and its width,
    taking the middle of the picture if the two don't match */
 .content.set-picture-height .md-image {
@@ -353,6 +376,6 @@ h1 {
     padding: 32px 16px 32px 88px;
     background: var(--panel);
   }
-  .info { order: 2; max-width: none; padding: 40px 16px 24px; }
+  .info { order: 2; max-width: none; padding: 40px var(--info-pad) 24px; --info-pad: 16px; }
   .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--panel); }
 }
