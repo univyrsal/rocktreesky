@@ -90,6 +90,7 @@ const raisedEl = document.querySelector('.raised');
 const labelEl = document.querySelector('.raised-label');
 const donorsEl = document.querySelector('.donors');
 const content = document.querySelector('.content');
+const donateEl = document.querySelector('.donate');
 
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
@@ -104,6 +105,7 @@ function applySettings() {
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
+  root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT_ON_PHONES', 1000)) + 'px');
   root.style.setProperty('--fill-duration', setting('FILL_ANIMATION_MS', 1600) + 'ms');
   sidebar.classList.toggle('scrolls', !setting('STAY_IN_PLACE', true));
   document.body.classList.toggle('panel-right', setting('PANEL_SIDE', 'right') !== 'left');
@@ -117,6 +119,33 @@ function applySettings() {
   // {banner} pictures: 0 = their own shape; any other number crops them to that height
   const bannerHeight = Math.max(0, setting('BANNER_HEIGHT', 0));
   root.style.setProperty('--banner-height', bannerHeight > 0 ? bannerHeight + 'px' : 'auto');
+}
+
+// The Zeffy donation form (settings.md: ZEFFY_FORM_LINK). Takes the form's
+// normal link or its embed link, and shows the embed version in the panel.
+function showDonateForm() {
+  const link = setting('ZEFFY_FORM_LINK', '').trim();
+  if (!link) return;
+  let url = null;
+  try { url = new URL(link); } catch (err) { /* not a link */ }
+  if (!url || url.protocol !== 'https:' || !/(^|.)zeffy.com$/i.test(url.hostname)) {
+    console.warn('ZEFFY_FORM_LINK in settings.md should be a link starting https://www.zeffy.com/ ; showing the placeholder instead.');
+    return;
+  }
+  // The embed version has /embed/ before the form type, after any language
+  // part (www.zeffy.com/en-US/embed/donation-form/...)
+  const parts = url.pathname.split('/').filter(Boolean);
+  if (!parts.includes('embed')) parts.splice(/^[a-z]{2}(-[a-z]{2})?$/i.test(parts[0] || '') ? 1 : 0, 0, 'embed');
+  url.pathname = '/' + parts.join('/');
+
+  const frame = document.createElement('iframe');
+  frame.className = 'donate-form';
+  frame.title = 'Donation form powered by Zeffy';
+  frame.src = url.href;
+  frame.allow = 'payment';                    // Apple Pay / Google Pay
+  frame.setAttribute('allowpaymentrequest', ''); // the same, for older browsers
+  frame.setAttribute('allowtransparency', 'true');
+  donateEl.replaceChildren(frame);
 }
 
 // The page text, from content.md. A # heading on the very first line is the
@@ -239,5 +268,6 @@ loadContent();
 loadSettings().then(() => {
   loadFonts();
   applySettings();
+  showDonateForm();
   return progress;
 }).then(render);

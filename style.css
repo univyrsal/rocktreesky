@@ -8,6 +8,7 @@
   --panel: #6abf4b;               /* settings.md: PANEL_COLOR */
   --thermometer-width: 56px;      /* settings.md: THERMOMETER_WIDTH */
   --pay-width: 420px;             /* settings.md: PAY_PANEL_WIDTH */
+  --form-height: 1000px;          /* settings.md: FORM_HEIGHT_ON_PHONES */
   --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
   --bulb-size: calc(var(--thermometer-width) * 1.9);
   --tube-border: 10px;
@@ -188,14 +189,25 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Pay widget column */
+/* Donation form column */
 .donate {
   width: var(--pay-width);
   min-height: 0;
   overflow-y: auto;
 }
 
-.widget-placeholder {
+/* The Zeffy form fills the column and scrolls inside itself */
+.donate:has(.donate-form) { overflow: hidden; }
+
+.donate-form {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 12px;
+}
+
+.form-placeholder {
   height: 100%;
   min-height: 420px;
   display: grid;
@@ -366,7 +378,7 @@ h1 {
 }
 
 /* Narrow screens: no room for side-by-side, so stack:
-   thermometer, then the info, then the pay widget right after it */
+   thermometer, then the info, then the donation form right after it */
 @media (max-width: 1000px) {
   .layout, .panel-right .layout { display: flex; flex-direction: column; align-items: stretch; }
   .sidebar { display: contents; }
@@ -378,4 +390,6 @@ h1 {
   }
   .info { order: 2; max-width: none; padding: 40px var(--info-pad) 24px; --info-pad: 16px; }
   .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--panel); }
+  .donate:has(.donate-form) { overflow: visible; }
+  .donate-form { height: var(--form-height); }
 }

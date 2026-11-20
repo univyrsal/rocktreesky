@@ -18,11 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch total from Givebutter
+      - name: Fetch total from Zeffy
         run: node scripts/fetch-progress.mjs
         env:
-          GIVEBUTTER_API_KEY: ${{ secrets.GIVEBUTTER_API_KEY }}
-          GIVEBUTTER_CAMPAIGN_ID: ${{ secrets.GIVEBUTTER_CAMPAIGN_ID }}
+          ZEFFY_API_KEY: ${{ secrets.ZEFFY_API_KEY }}
+          ZEFFY_CAMPAIGN_ID: ${{ secrets.ZEFFY_CAMPAIGN_ID }}
 
       - name: Commit if changed
         run: |

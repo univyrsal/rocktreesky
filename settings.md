@@ -17,7 +17,7 @@ Sizes are in screen pixels at normal zoom. 96 pixels is about 1 inch.
 The accent color is used for the numbered-step circles in the page text. (The thermometer has its own colors, under "The thermometer" below.)
 
 ```js
-ACCENT_COLOR = "#6ABF4B"
+ACCENT_COLOR = "#6BC04B"
 ```
 
 The background of the thermometer + pay panel.
@@ -63,7 +63,7 @@ FALLBACK_FONT = "Nunito"
 
 ## The thermometer
 
-The goal shown before the first Givebutter sync. Once the GitHub Action has synced, the goal set on the Givebutter campaign is used instead, so change it there too.
+The goal shown before the first Zeffy sync. Once the GitHub Action has synced, the goal set on the Zeffy campaign is used instead (if it has one), so change it there too.
 
 ```js
 DEFAULT_GOAL = 10000
@@ -110,24 +110,36 @@ ANIMATE_ON_LOAD = true
 FILL_ANIMATION_MS = 1600
 ```
 
-## The thermometer + pay panel
+## The thermometer + donation panel
 
-Which side of the screen the thermometer and pay widget sit on: `"right"` (the info is read first, then the pay form is right beside it) or `"left"` (the goal is the first thing people see).
+The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. `""` shows a placeholder box instead.
+
+```js
+ZEFFY_FORM_LINK = ""
+```
+
+On phones the form sits below the page text instead of beside it, and this is how tall it is there, in pixels. If the form gets cut off at the bottom, make it bigger.
+
+```js
+FORM_HEIGHT_ON_PHONES = 1000
+```
+
+Which side of the screen the thermometer and donation form sit on: `"right"` (the info is read first, then the form is right beside it) or `"left"` (the goal is the first thing people see).
 
 ```js
 PANEL_SIDE = "right"
 ```
 
-- `true` = the thermometer and pay widget stay in place on the screen while the info scrolls.
+- `true` = the thermometer and donation form stay in place on the screen while the info scrolls.
 - `false` = they scroll away with the rest of the page.
 
-On narrow screens (phones, small tablets) there isn't room for side-by-side, so the page always stacks: thermometer, then the info, then the pay widget.
+On narrow screens (phones, small tablets) there isn't room for side-by-side, so the page always stacks: thermometer, then the info, then the donation form.
 
 ```js
 STAY_IN_PLACE = true
 ```
 
-How wide the pay widget's column is.
+How wide the donation form's column is.
 
 ```js
 PAY_PANEL_WIDTH = 420
