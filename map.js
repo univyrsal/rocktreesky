@@ -9,6 +9,9 @@ const MAP_IMAGE = 'images/California-Satellite-Map.jpg';
 const MAP_MASK = 'images/California-Satellite-Map-mask.png';
 const MAP_W = 2114;
 const MAP_H = 2030;
+// Where the land is in the picture (the white of the mask); the empty
+// strips around it are cropped off so the map shows as big as it can
+const MAP_LAND = { x0: 233, y0: 17, x1: 1994, y1: 2022 };
 
 // The map's two pictures, loaded and decoded before the map shows or starts
 // drawing (index.html already started downloading them)
@@ -26,7 +29,9 @@ function buildRouteMaps() {
 
 function buildRouteMap(slot) {
   const id = 'rm' + ++routeMapCount;
-  const pct = (x, y) => `left:${(x / MAP_W) * 100}%;top:${(y / MAP_H) * 100}%`;
+  // The part of the picture shown (set below, once the detail box is known)
+  let view = { x: 0, y: 0, w: MAP_W, h: MAP_H };
+  const pct = (x, y) => `left:${((x - view.x) / view.w) * 100}%;top:${((y - view.y) / view.h) * 100}%`;
   const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   // ROUTE: ["Name", x, y, "side"] is a stop, [x, y] a bend in the road.
@@ -67,6 +72,16 @@ function buildRouteMap(slot) {
       detail = { area, zoom, x: d.at[0], y: d.at[1], w: d.width, h: area.h * zoom, title: d.title || '' };
     }
   }
+  // Shown: the land, the detail box and the route, with a little room around
+  {
+    const xs = [MAP_LAND.x0, MAP_LAND.x1, ...points.map((p) => p.x)];
+    const ys = [MAP_LAND.y0, MAP_LAND.y1, ...points.map((p) => p.y)];
+    if (detail) { xs.push(detail.x, detail.x + detail.w); ys.push(detail.y, detail.y + detail.h); }
+    const pad = 24;
+    const x0 = Math.max(0, Math.min(...xs) - pad), x1 = Math.min(MAP_W, Math.max(...xs) + pad);
+    const y0 = Math.max(0, Math.min(...ys) - pad), y1 = Math.min(MAP_H, Math.max(...ys) + pad);
+    view = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+  }
   const inArea = (p) => detail && p.x >= detail.area.x && p.x <= detail.area.x + detail.area.w && p.y >= detail.area.y && p.y <= detail.area.y + detail.area.h;
   const toBox = (p) => ({ x: detail.x + (p.x - detail.area.x) * detail.zoom, y: detail.y + (p.y - detail.area.y) * detail.zoom });
 
@@ -74,23 +89,27 @@ function buildRouteMap(slot) {
   // line again, zoomed in, so they always match.
   const routeLines = `<polyline class="rm-casing" points="${line}"/><polyline class="rm-line" points="${line}"/>`;
   let detailSvg = '';
+  let detailLines = '';
   if (detail) {
     const { area } = detail;
     // The box appears once the whole route is drawn, growing out of the
     // area it zooms in on: --from shrinks it back down onto that area
     const s = 1 / detail.zoom;
     const from = `translate(${area.x - detail.x * s}px, ${area.y - detail.y * s}px) scale(${s})`;
+    const zoomed = (inside) => `<svg class="rm-zoomed" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}">${inside}</svg>`;
     detailSvg = `
       <g class="rm-detail">
         <rect class="rm-area" x="${area.x}" y="${area.y}" width="${area.w}" height="${area.h}"/>
         <line class="rm-link" x1="${area.x + area.w}" y1="${area.y}" x2="${detail.x}" y2="${detail.y}"/>
         <line class="rm-link" x1="${area.x + area.w}" y1="${area.y + area.h}" x2="${detail.x}" y2="${detail.y + detail.h}"/>
         <g class="rm-box" style="--from: ${from}">
-          <svg class="rm-zoomed" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}">
-            <use href="#${id}-base"/>${routeLines}
-          </svg>
+          ${zoomed(`<use href="#${id}-base"/>`)}
           <rect class="rm-frame" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}"/>
         </g>
+      </g>`;
+    detailLines = `
+      <g class="rm-detail">
+        <g class="rm-box" style="--from: ${from}">${zoomed(routeLines)}</g>
       </g>`;
   }
 
@@ -121,8 +140,10 @@ function buildRouteMap(slot) {
   figure.style.setProperty('--stop-color', setting('STOP_COLOR', '#DC283C'));
   figure.style.setProperty('--start-color', setting('START_COLOR', '#1E78FF'));
   figure.innerHTML = `
-    <div class="rm-stage">
-      <svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Map of the route: ${esc(stops.map((s) => s.name).join(', then '))}">
+    <div class="rm-stage" style="aspect-ratio: ${view.w} / ${view.h}">
+      <!-- Two layers: the picture, which stays still, and the route on top,
+           which is redrawn while it draws, without redrawing the picture -->
+      <svg class="rm-base" viewBox="${view.x} ${view.y} ${view.w} ${view.h}" role="img" aria-label="Map of the route: ${esc(stops.map((s) => s.name).join(', then '))}">
         <defs>
           <mask id="${id}-land" maskUnits="userSpaceOnUse" x="0" y="0" width="${MAP_W}" height="${MAP_H}">
             <image href="${MAP_MASK}" width="${MAP_W}" height="${MAP_H}"/>
@@ -130,8 +151,11 @@ function buildRouteMap(slot) {
           <g id="${id}-base"><image href="${MAP_IMAGE}" width="${MAP_W}" height="${MAP_H}" mask="url(#${id}-land)"/></g>
         </defs>
         <use href="#${id}-base"/>
-        ${routeLines}
         ${detailSvg}
+      </svg>
+      <svg class="rm-route" viewBox="${view.x} ${view.y} ${view.w} ${view.h}" aria-hidden="true">
+        ${routeLines}
+        ${detailLines}
       </svg>
       <div class="rm-marks" aria-hidden="true">${marks}</div>
       ${detail && detail.title ? `<p class="rm-detail-title" style="${pct(detail.x + detail.w + 24, detail.y + 16)}">${esc(detail.title)}</p>` : ''}
@@ -141,10 +165,10 @@ function buildRouteMap(slot) {
 
   // The line's thickness is set in screen pixels, so it stays the same
   // whatever size the map is shown at (and in the zoomed box too)
-  const svg = figure.querySelector('svg');
+  const svg = figure.querySelector('.rm-route');
   const widthPx = Math.max(1, setting('ROUTE_WIDTH', 4));
   new ResizeObserver(([entry]) => {
-    const perPx = MAP_W / Math.max(1, entry.contentRect.width);
+    const perPx = view.w / Math.max(1, entry.contentRect.width);
     svg.querySelectorAll(':scope > .rm-line, :scope > .rm-casing').forEach((el) => {
       el.style.strokeWidth = (el.classList.contains('rm-casing') ? widthPx + 2 : widthPx) * perPx;
     });
@@ -196,12 +220,12 @@ function buildRouteMap(slot) {
     shown.then(() => seen.observe(figure.querySelector('.rm-stage')));
   }
 
-  if (setting('MAP_EDIT_MODE', false)) startMapEditMode(figure, detail);
+  if (setting('MAP_EDIT_MODE', false)) startMapEditMode(figure, detail, view);
 }
 
 // MAP_EDIT_MODE: click the map to get positions for ROUTE and MAP_DETAIL.
 // A click in the detail box gives that spot's position on the main map.
-function startMapEditMode(figure, detail) {
+function startMapEditMode(figure, detail, view) {
   const stage = figure.querySelector('.rm-stage');
   figure.classList.add('rm-editing');
   const panel = document.createElement('div');
@@ -218,8 +242,8 @@ function startMapEditMode(figure, detail) {
 
   const mapPoint = (e) => {
     const box = stage.getBoundingClientRect();
-    let x = ((e.clientX - box.left) / box.width) * MAP_W;
-    let y = ((e.clientY - box.top) / box.height) * MAP_H;
+    let x = view.x + ((e.clientX - box.left) / box.width) * view.w;
+    let y = view.y + ((e.clientY - box.top) / box.height) * view.h;
     if (detail && x >= detail.x && x <= detail.x + detail.w && y >= detail.y && y <= detail.y + detail.h) {
       x = detail.area.x + (x - detail.x) / detail.zoom;
       y = detail.area.y + (y - detail.y) / detail.zoom;

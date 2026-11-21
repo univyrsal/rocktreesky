@@ -367,7 +367,7 @@ h1 {
 
 .rm-stage {
   position: relative;
-  aspect-ratio: 2114 / 2030;
+  aspect-ratio: 2114 / 2030;   /* map.js sets the cropped shape */
 }
 
 .rm-stage > svg {
@@ -377,6 +377,13 @@ h1 {
   height: 100%;
   overflow: visible;
 }
+
+/* The picture layer doesn't show what's cropped off */
+.rm-stage > .rm-base { overflow: hidden; }
+
+/* The route layer gets its own layer on the graphics card, so drawing the
+   line doesn't make the phone redraw the satellite picture every frame */
+.rm-stage > .rm-route { will-change: transform; }
 
 .rm-line,
 .rm-casing {
@@ -586,6 +593,8 @@ h1 {
   .row-top > .section-picture { order: -4; }
   .row-top > .donate { order: -3; }
   .row-top > .content { order: -2; }
+  /* The map runs right to the edges of the screen, as big as it can be */
+  .map-col:not(.map-card) { margin-inline: -16px; }
   .section-title,
   .section-picture { margin-bottom: 0; }
   .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */
