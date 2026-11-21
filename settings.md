@@ -130,7 +130,7 @@ TOP_TEXT_WIDTH = 300
 The space between one row of sections and the next, and between the sections side by side in a row.
 
 ```js
-ROW_GAP = 96
+ROW_GAP = 160
 COLUMN_GAP = 64
 ```
 
