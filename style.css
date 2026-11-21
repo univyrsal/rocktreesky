@@ -566,8 +566,8 @@ h1 {
   .row-top .donate { grid-column: 2; grid-row: var(--form-row, 1) / span 2; }
 }
 
-/* Narrow screens: no room for side by side, so each row stacks, left
-   section first */
+/* Narrow screens: no room for side by side, so each row stacks: the top
+   row as form, text, map; the quotes one after another */
 @media (max-width: 900px) {
   .page { padding: 40px 16px 64px; }
   .top-bar-inner { padding: 24px 16px; }
@@ -580,6 +580,12 @@ h1 {
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
   .row-top .donate { grid-column: auto; grid-row: auto; }
+  /* On a phone the top row goes form, text, then map (after any title or
+     picture the row has) */
+  .row-top > .section-title { order: -5; }
+  .row-top > .section-picture { order: -4; }
+  .row-top > .donate { order: -3; }
+  .row-top > .content { order: -2; }
   .section-title,
   .section-picture { margin-bottom: 0; }
   .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */

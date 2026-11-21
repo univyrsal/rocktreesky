@@ -260,6 +260,8 @@ function loadContent(sections) {
 // in the left or right column or in the middle under both
 function placeQuotes() {
   const quotes = setting('QUOTES', {});
+  const animate = setting('BOX_ANIMATION', true);
+  const phone = matchMedia('(max-width: 900px)').matches;   // one column: they take turns
   const made = [];
   for (const [side, spot] of [['left', '.quote-col[data-side="left"]'], ['right', '.quote-col[data-side="right"]'], ['middle', '.quote-middle']]) {
     const names = Array.isArray(quotes[side]) ? quotes[side] : [];
@@ -270,6 +272,15 @@ function placeQuotes() {
       box.className = 'content text-box';
       box.dataset.md = 'text/quotes/' + file + '.md';
       box.dataset.side = side;
+      // Out of place from the start (so they never visibly slide away first):
+      // the left column's from the left, the right's from the right, the
+      // middle ones from below
+      if (animate) {
+        const slide = phone ? (made.length % 2 ? 1 : -1) : { left: -1, right: 1 }[side] || 0;
+        box.style.setProperty('--slide', slide);
+        box.style.setProperty('--rise', slide ? 0 : 1);
+        box.classList.add('waiting');
+      }
       document.querySelector(spot).appendChild(box);
       made.push(box);
     }
@@ -277,20 +288,11 @@ function placeQuotes() {
   return made;
 }
 
-// The quote boxes slide in as they scroll into view: the left column's from
-// the left, the right column's from the right, the middle ones up from below
+// The quote boxes slide into place as they scroll into view
 function slideInBoxes() {
   root.style.setProperty('--box-slide-ms', Math.max(0, setting('BOX_ANIMATION_MS', 700)) + 'ms');
-  const boxes = [...document.querySelectorAll('.quotes .text-box')];
-  if (!boxes.length || !setting('BOX_ANIMATION', true)) return;
-
-  const phone = matchMedia('(max-width: 900px)').matches;   // one column: they take turns
-  boxes.forEach((box, i) => {
-    const side = phone ? (i % 2 ? 1 : -1) : { left: -1, right: 1 }[box.dataset.side] || 0;
-    box.style.setProperty('--slide', side);
-    box.style.setProperty('--rise', side ? 0 : 1);
-    box.classList.add('waiting');
-  });
+  const boxes = [...document.querySelectorAll('.quotes .text-box.waiting')];
+  if (!boxes.length) return;
   const watch = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (!e.isIntersecting) return;
