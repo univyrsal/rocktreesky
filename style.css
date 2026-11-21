@@ -146,11 +146,11 @@ body {
   text-align: center;
 }
 
-/* The top row: the map takes what the text and the form leave */
-.row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, var(--form-width)); }
-
-/* The text between them sits halfway down the row */
-.row-top > .content { align-self: center; }
+/* The top row: the text in the middle of the page, with the map and the
+   form in equal columns either side. The form is at most FORM_WIDTH wide,
+   centered in its column. */
+.row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, 1fr); }
+.row-top .donate { width: min(100%, var(--form-width)); justify-self: center; }
 
 /* The map in its own section lines up with the top of the text beside it */
 .map-col .route-map { margin: 0; }
