@@ -46,9 +46,39 @@ body {
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* The bar across the top of the screen, with the title in the middle and
+   the logo at the left (settings.md: TITLE_BAR_COLOR, LOGO_IMAGE) */
+.top-bar {
+  background: var(--title-bar-color, transparent);
+  color: var(--title-bar-text, inherit);
+  --muted: color-mix(in srgb, currentColor 75%, transparent);
+}
+
+.top-bar-inner {
+  position: relative;
+  max-width: calc(var(--page-width) + 2 * var(--side-space));
+  margin: 0 auto;
+  padding: 40px var(--side-space);
+}
+
+/* The title keeps clear of the logo on both sides, so it stays centered */
 .title-block {
-  margin-bottom: 56px;
+  padding: 0 var(--logo-space, 0px);
   text-align: center;
+}
+
+.logo {
+  position: absolute;
+  left: var(--side-space);
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0;
+}
+
+.logo img {
+  display: block;
+  width: auto;
+  height: var(--logo-height);
 }
 
 .row {
@@ -465,7 +495,9 @@ h1 {
    section first */
 @media (max-width: 900px) {
   .page { padding: 40px 16px 64px; }
-  .title-block { margin-bottom: 40px; }
+  .top-bar-inner { padding: 24px 16px; }
+  .logo { left: 16px; }
+  .logo img { height: min(var(--logo-height), 44px); }
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
   .row-top .donate { grid-column: auto; grid-row: auto; }

@@ -32,6 +32,24 @@ The color of the words.
 TEXT_COLOR = "#22302B"
 ```
 
+## The title bar
+
+The bar across the top of the screen, behind the title. `""` = no bar, just the page's background. The second color is for the title's words on the bar (`""` = the same as `TEXT_COLOR`).
+
+```js
+TITLE_BAR_COLOR = "#91BD7D"
+TITLE_BAR_TEXT_COLOR = ""
+```
+
+The logo at the left of the bar, from the `images` folder (`.avif`, `.png`, `.jpg`, `.svg` and `.webp` all work). `""` = no logo. Clicking it goes to `LOGO_LINK` (`""` = not clickable). `LOGO_HEIGHT` is how tall it is in pixels (on phones at most 44). The words describe it for people who can't see it, so say where it goes.
+
+```js
+LOGO_IMAGE = "images/RTS_Logo-icon.avif"
+LOGO_LINK = "https://rocktreesky.org"
+LOGO_HEIGHT = 72
+LOGO_WORDS = "Rock Tree Sky home page"
+```
+
 ## Fonts
 
 The font for headings (the page title and the headings in the text) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.

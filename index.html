@@ -13,10 +13,17 @@
 <body>
   <!-- Each text section's words come from its own file in the text folder
        (named in data-md); what's written here only shows if it can't load. -->
+  <!-- The bar across the top: the logo (LOGO_IMAGE in settings.md) and the title -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a class="logo" hidden></a>
+      <div class="title-block content" data-md="text/title.md">
+        <h1>Rock Tree Sky</h1>
+      </div>
+    </div>
+  </header>
+
   <main class="page">
-    <header class="title-block content" data-md="text/title.md">
-      <h1>Rock Tree Sky</h1>
-    </header>
 
     <!-- 1. The route map (map.js) | text | the donation form -->
     <section class="row row-top">

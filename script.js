@@ -84,6 +84,12 @@ function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
+  // The bar behind the title: "" = no bar, just the page's background
+  const barColor = setting('TITLE_BAR_COLOR', '').trim();
+  const barText = setting('TITLE_BAR_TEXT_COLOR', '').trim();
+  if (barColor) root.style.setProperty('--title-bar-color', barColor);
+  if (barText) root.style.setProperty('--title-bar-text', barText);
+  root.style.setProperty('--logo-height', Math.max(16, setting('LOGO_HEIGHT', 72)) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
   root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
   root.style.setProperty('--top-text-width', Math.max(120, setting('TOP_TEXT_WIDTH', 300)) + 'px');
@@ -144,6 +150,26 @@ function showDonateForm() {
   });
 }
 
+// LOGO_IMAGE: the logo at the left of the title bar, a link to LOGO_LINK
+function showLogo() {
+  const file = setting('LOGO_IMAGE', '').trim();
+  if (!file) return;
+  const logo = document.querySelector('.logo');
+  const link = setting('LOGO_LINK', '').trim();
+  if (link) logo.href = link;
+  else logo.removeAttribute('href');
+  const img = document.createElement('img');
+  img.src = file;
+  img.alt = setting('LOGO_WORDS', '');
+  img.addEventListener('error', () => console.warn(`LOGO_IMAGE in settings.md: couldn't load "${file}". Check the file is in the images folder and the name matches.`));
+  logo.replaceChildren(img);
+  logo.hidden = false;
+  // Room either side of the title for the logo, so the title stays in the middle
+  new ResizeObserver(() => {
+    root.style.setProperty('--logo-space', img.offsetWidth ? img.offsetWidth + 16 + 'px' : '0px');
+  }).observe(img);
+}
+
 // SIDE_PICTURE: the picture beside the text in the second row
 function showSidePicture() {
   const file = setting('SIDE_PICTURE', '').trim();
@@ -191,6 +217,7 @@ settingsReady.then(() => {
   applySettings();
   showDonateForm();
   showSidePicture();
+  showLogo();
 });
 
 // The route map needs both the page text (for where !map! is) and the settings
