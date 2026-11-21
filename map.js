@@ -88,29 +88,30 @@ function buildRouteMap(slot) {
   // The picture and the line. The detail box shows the same picture and
   // line again, zoomed in, so they always match.
   const routeLines = `<polyline class="rm-casing" points="${line}"/><polyline class="rm-line" points="${line}"/>`;
-  let detailSvg = '';
+  // The detail box is its own HTML layer over the map, so the phone's
+  // graphics chip can grow it into place without redrawing the picture.
+  // The area it zooms in on and the lines joining them are drawn with the
+  // route (detailLines), which is cheap to redraw.
   let detailLines = '';
+  let detailBox = '';
   if (detail) {
     const { area } = detail;
-    // The box appears once the whole route is drawn, growing out of the
-    // area it zooms in on: --from shrinks it back down onto that area
-    const s = 1 / detail.zoom;
-    const from = `translate(${area.x - detail.x * s}px, ${area.y - detail.y * s}px) scale(${s})`;
-    const zoomed = (inside) => `<svg class="rm-zoomed" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}">${inside}</svg>`;
-    detailSvg = `
+    // It appears once the whole route is drawn, growing out of the area it
+    // zooms in on: --from shrinks it back down onto that area (the
+    // percentages are of the box's own size)
+    const from = `translate(${((area.x - detail.x) / detail.w) * 100}%, ${((area.y - detail.y) / detail.h) * 100}%) scale(${1 / detail.zoom})`;
+    const zoomed = (cls, inside) => `<svg class="${cls}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}" preserveAspectRatio="none">${inside}</svg>`;
+    detailLines = `
       <g class="rm-detail">
         <rect class="rm-area" x="${area.x}" y="${area.y}" width="${area.w}" height="${area.h}"/>
         <line class="rm-link" x1="${area.x + area.w}" y1="${area.y}" x2="${detail.x}" y2="${detail.y}"/>
         <line class="rm-link" x1="${area.x + area.w}" y1="${area.y + area.h}" x2="${detail.x}" y2="${detail.y + detail.h}"/>
-        <g class="rm-box" style="--from: ${from}">
-          ${zoomed(`<use href="#${id}-base"/>`)}
-          <rect class="rm-frame" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}"/>
-        </g>
       </g>`;
-    detailLines = `
-      <g class="rm-detail">
-        <g class="rm-box" style="--from: ${from}">${zoomed(routeLines)}</g>
-      </g>`;
+    detailBox = `
+      <div class="rm-box" style="${pct(detail.x, detail.y)};width:${(detail.w / view.w) * 100}%;height:${(detail.h / view.h) * 100}%;--from: ${from}">
+        ${zoomed('rm-zoomed-picture', `<use href="#${id}-base"/>`)}
+        ${zoomed('rm-zoomed', routeLines)}
+      </div>`;
   }
 
   // Stops: a numbered marker with its name. One inside the detail area gets
@@ -151,12 +152,12 @@ function buildRouteMap(slot) {
           <g id="${id}-base"><image href="${MAP_IMAGE}" width="${MAP_W}" height="${MAP_H}" mask="url(#${id}-land)"/></g>
         </defs>
         <use href="#${id}-base"/>
-        ${detailSvg}
       </svg>
       <svg class="rm-route" viewBox="${view.x} ${view.y} ${view.w} ${view.h}" aria-hidden="true">
         ${routeLines}
         ${detailLines}
       </svg>
+      ${detailBox}
       <div class="rm-marks" aria-hidden="true">${marks}</div>
       ${detail && detail.title ? `<p class="rm-detail-title" style="${pct(detail.x + detail.w + 24, detail.y + 16)}">${esc(detail.title)}</p>` : ''}
     </div>
@@ -172,14 +173,14 @@ function buildRouteMap(slot) {
     svg.querySelectorAll(':scope > .rm-line, :scope > .rm-casing').forEach((el) => {
       el.style.strokeWidth = (el.classList.contains('rm-casing') ? widthPx + 2 : widthPx) * perPx;
     });
-    if (detail) svg.querySelectorAll('.rm-zoomed .rm-line, .rm-zoomed .rm-casing').forEach((el) => {
+    if (detail) figure.querySelectorAll('.rm-zoomed .rm-line, .rm-zoomed .rm-casing').forEach((el) => {
       el.style.strokeWidth = ((el.classList.contains('rm-casing') ? widthPx + 2 : widthPx) * perPx) / detail.zoom;
     });
   }).observe(figure);
 
   // Drawing the route: the line grows from the start, and each stop pops
   // up as the line reaches it
-  const lines = [...svg.querySelectorAll('.rm-line, .rm-casing')];
+  const lines = [...figure.querySelectorAll('.rm-line, .rm-casing')];
   const stopEls = [...figure.querySelectorAll('.rm-stop')];
   lines.forEach((el) => { el.style.strokeDasharray = total; });
   function drawTo(progress) {

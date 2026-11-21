@@ -142,7 +142,7 @@ function applySettings() {
 function showSections() {
   const sections = setting('SECTIONS', {});
   document.querySelectorAll('.row[data-section]').forEach((row) => {
-    const { color = '', title = '', picture = '', pictureWords = '' } = sections[row.dataset.section] || {};
+    const { color = '', title = '', picture = '', pictureWords = '', caption = '' } = sections[row.dataset.section] || {};
     const c = String(color).trim();
     row.classList.toggle('colored', !!c);
     row.style.setProperty('--section-color', c.toLowerCase() === 'accent' ? 'var(--accent)' : c);
@@ -150,13 +150,22 @@ function showSections() {
     const t = String(title).trim();
     const file = String(picture).trim();
     if (file) {
+      const figure = document.createElement('figure');
+      figure.className = 'section-picture';
       const img = document.createElement('img');
-      img.className = 'section-picture';
       img.loading = 'lazy';   // not until it's nearly on screen, so the map loads first
       img.src = file;
       img.alt = String(pictureWords);
       img.addEventListener('error', () => console.warn(`SECTIONS in settings.md: couldn't load the picture "${file}". Check the file is in the images folder and the name matches.`));
-      row.prepend(img);
+      figure.appendChild(img);
+      // caption: a small rounded label on the picture, in BOX_COLOR
+      const words = String(caption).trim();
+      if (words) {
+        const label = document.createElement('figcaption');
+        label.textContent = words;
+        figure.appendChild(label);
+      }
+      row.prepend(figure);
     }
     if (t) {
       const h = document.createElement('h2');

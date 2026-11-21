@@ -139,11 +139,12 @@ Each row's color, title and picture. The rows are `top` (the map, text and form)
 - `color`: fills the row's background out to the edges of the screen. `"accent"` uses `ACCENT_COLOR`. `""` = no color.
 - `title`: a heading centered across the top of the row. `""` = none.
 - `picture`: a picture from the `images` folder, under the title and across the whole row. `""` = none. `pictureWords` describe it for people who can't see it.
+- `caption`: a small rounded label on the picture's bottom left corner, in `BOX_COLOR`. `""` = none.
 
 ```js
 SECTIONS = {
   top:    { color: "", title: "" },
-  bottom: { color: "", title: "Hear From The Students", picture: "images/college_tour_students.jpg", pictureWords: "" },
+  bottom: { color: "", title: "Hear From The Students", picture: "images/college_tour_students.jpg", pictureWords: "", caption: "RTS Students at UC San Diego" },
 }
 ```
 

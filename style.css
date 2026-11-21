@@ -179,13 +179,29 @@ body {
    (settings.md: SECTION_PICTURE_HEIGHT; 0 keeps the picture's own shape) */
 .section-picture {
   grid-column: 1 / -1;
+  position: relative;
+  margin: 0 0 56px;
+}
+
+.section-picture img {
   display: block;
   width: 100%;
   height: var(--section-picture-height, auto);
-  margin-bottom: 56px;
   object-fit: cover;
   object-position: center;
   border-radius: var(--picture-radius, 12px);
+}
+
+/* Its caption: a small rounded label in the corner, the color of the cards */
+.section-picture figcaption {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: var(--box-color);
+  font-size: .9rem;
+  line-height: 1.4;
 }
 
 /* TEXT_CARDS: a text section in a rounded box like the quotes */
@@ -452,7 +468,6 @@ h1 {
 /* The detail box, the area it zooms in on, and the lines joining them */
 .rm-area { fill: none; stroke: #fff; stroke-width: 3; }
 .rm-link { stroke: #fff; stroke-width: 1.5; }
-.rm-frame { fill: none; stroke: #1b1d1d; stroke-width: 5; }
 
 /* The detail box waits until the route is drawn, then grows out of its
    area; the lines joining them and the stops in it follow once it's there */
@@ -462,14 +477,29 @@ h1 {
   transition: opacity .3s;
 }
 
+/* The box itself: an HTML layer (map.js), so growing it and fading it in
+   happen on the graphics chip */
 .rm-box {
+  position: absolute;
+  outline: 2px solid #1b1d1d;
+  opacity: 0;
   transform: var(--from);
   transform-origin: 0 0;
   transition: opacity .2s, transform .7s cubic-bezier(.2, .8, .2, 1);
+  will-change: transform, opacity;
+}
+
+.rm-box > svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .rm-detail-shown .rm-detail > *,
-.rm-detail-shown .rm-detail-title { opacity: 1; }
+.rm-detail-shown .rm-detail-title,
+.rm-detail-shown .rm-box { opacity: 1; }
 .rm-detail-shown .rm-box { transform: none; }
 .rm-detail-shown .rm-link,
 .rm-detail-shown .rm-detail-title { transition-delay: .6s; }
@@ -660,5 +690,6 @@ h1 {
   .tip-note::after { top: auto; bottom: -9px; right: auto; left: 50%; margin-left: -7px; transform: rotate(135deg); }
   .section-title,
   .section-picture { margin-bottom: 0; }
-  .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */
+  .section-picture img { max-height: 75vw; }   /* not a tall sliver on a phone */
+  .section-picture figcaption { left: 10px; bottom: 10px; padding: 4px 10px; font-size: .8rem; }
 }
