@@ -41,11 +41,10 @@ TITLE_BAR_COLOR = "#91BD7D"
 TITLE_BAR_TEXT_COLOR = ""
 ```
 
-How rounded the bar's corners are, and the space between the bar and the edges of the screen, in pixels (phones use at most 8). `0` and `0` = square, running edge to edge.
+How rounded the bar's two bottom corners are, in pixels. `0` = square.
 
 ```js
 TITLE_BAR_RADIUS = 20
-TITLE_BAR_MARGIN = 16
 ```
 
 The logo at the left of the bar, from the `images` folder (`.avif`, `.png`, `.jpg`, `.svg` and `.webp` all work). `""` = no logo. Clicking it goes to `LOGO_LINK` (`""` = not clickable). `LOGO_HEIGHT` is how tall it is in pixels (on phones at most 44). The words describe it for people who can't see it, so say where it goes.

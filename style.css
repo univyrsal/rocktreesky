@@ -49,8 +49,8 @@ body {
 /* The bar across the top of the screen, with the title in the middle and
    the logo at the left (settings.md: TITLE_BAR_COLOR, LOGO_IMAGE) */
 .top-bar {
-  margin: var(--title-bar-margin, 0px);        /* settings.md: TITLE_BAR_MARGIN */
-  border-radius: var(--title-bar-radius, 0px); /* settings.md: TITLE_BAR_RADIUS */
+  /* Only the bottom corners are rounded (settings.md: TITLE_BAR_RADIUS) */
+  border-radius: 0 0 var(--title-bar-radius, 0px) var(--title-bar-radius, 0px);
   background: var(--title-bar-color, transparent);
   color: var(--title-bar-text, inherit);
   --muted: color-mix(in srgb, currentColor 75%, transparent);
@@ -572,7 +572,6 @@ h1 {
   .page { padding: 40px 16px 64px; }
   .top-bar-inner { padding: 24px 16px; }
   .logo { left: 16px; }
-  .top-bar { margin: min(var(--title-bar-margin, 0px), 8px); }
   .quote-col,
   .quote-middle { overflow-clip-margin: 16px; }
   .quotes { row-gap: var(--box-gap); }

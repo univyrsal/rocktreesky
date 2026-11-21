@@ -90,7 +90,6 @@ function applySettings() {
   if (barColor) root.style.setProperty('--title-bar-color', barColor);
   if (barText) root.style.setProperty('--title-bar-text', barText);
   root.style.setProperty('--title-bar-radius', Math.max(0, setting('TITLE_BAR_RADIUS', 20)) + 'px');
-  root.style.setProperty('--title-bar-margin', Math.max(0, setting('TITLE_BAR_MARGIN', 16)) + 'px');
   root.style.setProperty('--logo-height', Math.max(16, setting('LOGO_HEIGHT', 72)) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
   root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
