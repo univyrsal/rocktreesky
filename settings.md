@@ -130,7 +130,7 @@ Each row's color and title. The rows are `top` (the map, text and form), `middle
 SECTIONS = {
   top:    { color: "", title: "" },
   middle: { color: "", title: "" },
-  bottom: { color: "#EDEBD5", title: "Hear Straight From Students" },
+  bottom: { color: "", title: "Hear Straight From Students" },
 }
 ```
 
@@ -165,7 +165,7 @@ ZEFFY_FORM_LINK = ""
 The words in the box while `ZEFFY_FORM_LINK` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
 
 ```js
-FORM_PLACEHOLDER = "Zeffy donation form goes here"
+FORM_PLACEHOLDER = "Zeffy donation payment form will go inside this box (with details such as funds raised etc)"
 ```
 
 How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
@@ -201,6 +201,21 @@ Text sections to center, by file name, like `["beside-form.md", "bottom-left.md"
 
 ```js
 CENTERED_TEXT = []
+```
+
+Text sections shown as rounded boxes, by file name. Leave two or more empty lines in the file where one box ends and the next begins. `BOX_COLOR` is their color (`"accent"` uses `ACCENT_COLOR`).
+
+```js
+BOXED_TEXT = ["bottom-left.md", "bottom-right.md"]
+BOX_COLOR = "#EDEBD5"
+```
+
+- `true` = each box slides in from its side when it scrolls into view, taking `BOX_ANIMATION_MS` (1000 = 1 second).
+- `false` = the boxes are just there.
+
+```js
+BOX_ANIMATION = true
+BOX_ANIMATION_MS = 700
 ```
 
 Pictures:

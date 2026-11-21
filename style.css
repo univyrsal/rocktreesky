@@ -99,6 +99,32 @@ body {
   border-image: conic-gradient(var(--section-color) 0 0) fill 0 // 0 100vw;
 }
 
+/* BOXED_TEXT: a text section as rounded boxes (settings.md: BOX_COLOR),
+   each sliding in from its side when it scrolls into view */
+.text-box {
+  margin-bottom: 32px;
+  padding: 28px 32px;
+  border-radius: 20px;
+  background: var(--box-color);
+  transition: opacity var(--box-slide-ms) ease-out, transform var(--box-slide-ms) cubic-bezier(.2, .8, .2, 1);
+}
+
+/* A box still waiting to slide in is cut off at the edge of the screen,
+   so the page never scrolls sideways */
+.boxed {
+  overflow-x: clip;
+  overflow-clip-margin: var(--side-space);
+}
+
+.text-box:last-child { margin-bottom: 0; }
+.text-box > :first-child { margin-top: 0; }
+.text-box > :last-child { margin-bottom: 0; }
+
+.text-box.waiting {
+  opacity: 0;
+  transform: translateX(calc(var(--slide, -1) * 80px));
+}
+
 /* A colored last row runs down to the bottom of the page */
 .page:has(> .row.colored:last-child) { padding-bottom: 0; }
 
@@ -518,6 +544,7 @@ h1 {
   .page { padding: 40px 16px 64px; }
   .top-bar-inner { padding: 24px 16px; }
   .logo { left: 16px; }
+  .boxed { overflow-clip-margin: 16px; }
   .logo img { height: min(var(--logo-height), 44px); }
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }

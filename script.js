@@ -212,11 +212,22 @@ function showSidePicture() {
 // The text sections: each one's words come from the file named in its
 // data-md (the text folder), through markdownToHtml (markdown.js). In the
 // title's file, a # heading on the first line is the page's big title.
-function loadContent() {
+function loadContent(settingsReady) {
+  const sectionName = (n) => String(n).replace(/^.*\//, '').replace(/\.md$/i, '').toLowerCase();
   return Promise.all([...document.querySelectorAll('[data-md]')].map((section) =>
     fetch(section.dataset.md, { cache: 'no-cache' })
       .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))))
+      .then((md) => settingsReady.then(() => md))   // BOXED_TEXT is a setting
       .then((md) => {
+        // BOXED_TEXT: each part of the file between two or more empty lines
+        // is its own rounded box
+        if (setting('BOXED_TEXT', []).map(sectionName).includes(sectionName(section.dataset.md))) {
+          section.classList.add('boxed');
+          section.innerHTML = md.replace(/\r\n?/g, '\n').split(/\n[ \t]*\n[ \t]*\n\s*/)
+            .filter((part) => part.trim())
+            .map((part) => '<div class="text-box">' + markdownToHtml(part) + '</div>').join('\n');
+          return;
+        }
         let title = '';
         if (section.classList.contains('title-block')) {
           // The title is the first line (starting with #) and every line
@@ -237,8 +248,37 @@ function loadContent() {
       .catch((err) => console.warn(section.dataset.md + ' could not be loaded (' + err.message + ').'))));
 }
 
-const contentReady = loadContent();
+// BOXED_TEXT boxes slide in from the side they're on as they scroll into view
+function slideInBoxes() {
+  root.style.setProperty('--box-color', (() => {
+    const c = setting('BOX_COLOR', '#EDEBD5').trim();
+    return c.toLowerCase() === 'accent' ? 'var(--accent)' : c;
+  })());
+  root.style.setProperty('--box-slide-ms', Math.max(0, setting('BOX_ANIMATION_MS', 700)) + 'ms');
+  const boxes = [...document.querySelectorAll('.boxed .text-box')];
+  if (!boxes.length || !setting('BOX_ANIMATION', true)) return;
+
+  boxes.forEach((box, i) => {
+    // Left of the middle of the screen comes in from the left, right from
+    // the right; on a phone (one column) they take turns
+    const r = box.getBoundingClientRect();
+    const mid = r.left + r.width / 2;
+    const side = Math.abs(mid - innerWidth / 2) < 40 ? (i % 2 ? 1 : -1) : (mid < innerWidth / 2 ? -1 : 1);
+    box.style.setProperty('--slide', side);
+    box.classList.add('waiting');
+  });
+  const watch = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.remove('waiting');
+      watch.unobserve(e.target);
+    });
+  }, { threshold: 0.15 });
+  boxes.forEach((box) => watch.observe(box));
+}
+
 const settingsReady = loadSettings();
+const contentReady = loadContent(settingsReady);
 
 settingsReady.then(() => {
   loadFonts();
@@ -250,3 +290,4 @@ settingsReady.then(() => {
 
 // The route map needs both the page text (for where !map! is) and the settings
 Promise.all([contentReady, settingsReady]).then(buildRouteMaps);
+Promise.all([contentReady, settingsReady]).then(slideInBoxes);
