@@ -5,14 +5,19 @@
   --muted: #5f6b66;
   --stone: #dcd6cc;
   --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
-  --panel: #6abf4b;               /* settings.md: PANEL_COLOR */
+  --card: #fcfbf5;                /* settings.md: CARD_COLOR */
   --thermometer-width: 56px;      /* settings.md: THERMOMETER_WIDTH */
-  --pay-width: 420px;             /* settings.md: PAY_PANEL_WIDTH */
-  --form-height: 1000px;          /* settings.md: FORM_HEIGHT_ON_PHONES */
+  --form-height: 900px;           /* settings.md: FORM_HEIGHT */
+  --page-width: 1200px;           /* settings.md: PAGE_WIDTH */
+  --row-gap: 96px;                /* settings.md: ROW_GAP */
+  --column-gap: 64px;             /* settings.md: COLUMN_GAP */
+  --picture-gap: 64px;            /* settings.md: PICTURE_GAP */
+  --card-width: 700px;            /* settings.md: FORM_CARD_WIDTH */
+  --bottom-form-width: 560px;     /* settings.md: BOTTOM_FORM_WIDTH */
   --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
   --bulb-size: calc(var(--thermometer-width) * 1.9);
   --tube-border: 10px;
-  --info-pad: 48px;               /* space either side of the text */
+  --info-pad: 0px;                /* a {banner} runs this far past its section's sides */
   --heading-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;  /* settings.md: HEADING_FONT */
   --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
   --body-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;     /* settings.md: BODY_FONT */
@@ -31,37 +36,80 @@ body {
   line-height: 1.65;
 }
 
-.layout {
+/* The page: a centered column of rows, each with two sections side by side */
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+
+.title-block {
+  margin-bottom: 56px;
+  text-align: center;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--column-gap);
+  align-items: start;
+  margin-bottom: var(--row-gap);
+}
+
+/* Text beside the form card: the card keeps its own width */
+.row-form { grid-template-columns: minmax(0, 1fr) minmax(0, var(--card-width)); }
+
+/* Text beside the picture has its own gap (settings.md: PICTURE_GAP) */
+.row-picture { column-gap: var(--picture-gap); }
+
+/* The map in its own section lines up with the top of the text beside it */
+.map-col .route-map { margin: 0; }
+
+/* So a {banner} picture knows how wide its section is */
+.row > * { container-type: inline-size; }
+
+/* A rounded card holding a donation form */
+.card {
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--card);
+}
+
+/* The top card: the form, with the thermometer to its right */
+.form-card {
   display: flex;
-  align-items: flex-start;
+  gap: 24px;
 }
 
-/* Panel on the right instead of the left (settings.md: PANEL_SIDE) */
-.panel-right .layout {
-  flex-direction: row-reverse;
+.form-card .donate { flex: 1; min-width: 0; }
+
+.bottom-form .card {
+  max-width: var(--bottom-form-width);
+  margin: 0 auto;
 }
 
-/* Thermometer + pay panel: pinned to the screen while the page scrolls */
-.sidebar {
-  position: sticky;
-  top: 0;
-  flex: none;
-  display: flex;
-  gap: 32px;
-  height: 100vh;
-  height: 100dvh;
-  padding: 32px;
-  background: var(--panel);
-  /* Grey text is hard to read on the accent, so it uses the main text color */
-  --muted: var(--text);
+/* The picture beside the text (settings.md: SIDE_PICTURE) */
+.side-picture img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--picture-radius, 12px);
 }
 
-.sidebar.scrolls {
-  position: static;
+.picture-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: 16px;
+  border: 2px dashed var(--muted);
+  border-radius: var(--picture-radius, 12px);
+  color: var(--muted);
+  text-align: center;
 }
 
 /* Thermometer column */
 .meter {
+  flex: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -189,15 +237,8 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Donation form column */
-.donate {
-  width: var(--pay-width);
-  min-height: 0;
-  overflow-y: auto;
-}
-
-/* The Zeffy form fills the column and scrolls inside itself */
-.donate:has(.donate-form) { overflow: hidden; }
+/* Donation form: FORM_HEIGHT tall, scrolling inside itself if it's longer */
+.donate { height: var(--form-height); }
 
 .donate-form {
   display: block;
@@ -209,34 +250,13 @@ body {
 
 .form-placeholder {
   height: 100%;
-  min-height: 420px;
   display: grid;
   place-items: center;
   padding: 16px;
   border: 2px dashed var(--stone);
   border-radius: 12px;
   color: var(--muted);
-}
-
-/* The info */
-.info {
-  flex: 1;
-  min-width: 0;
-  max-width: 720px;
-  padding: 56px var(--info-pad) 120px;
-  container-type: inline-size;  /* so a banner knows how wide the section is */
-}
-
-/* With the panel on the right, the text column sits centered in the space
-   left of it, rather than starting partway across a wide screen */
-.panel-right .info {
-  max-width: none;
-}
-
-.panel-right .info > * {
-  max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center;
 }
 
 h1 {
@@ -244,13 +264,17 @@ h1 {
   font: var(--heading-weight) clamp(2.25rem, 4vw, 3.5rem)/1.1 var(--heading-font);
 }
 
-/* The page text, from content.md (styles copied from the SFS sections) */
+/* The text sections, from the text folder (styles copied from the SFS sections) */
 
 /* The line right under the title */
 .content h1 + p {
-  margin: 8px 0 32px;
+  margin: 8px 0 0;
   color: var(--muted);
 }
+
+/* No gap above a section's first line or below its last */
+.content > :first-child { margin-top: 0; }
+.content > :last-child { margin-bottom: 0; }
 
 .content p { margin: 0 0 1em; }
 
@@ -567,19 +591,15 @@ h1 {
   .content .pairs .pair-right { text-align: center; }
 }
 
-/* Narrow screens: no room for side-by-side, so stack:
-   thermometer, then the info, then the donation form right after it */
-@media (max-width: 1000px) {
-  .layout, .panel-right .layout { display: flex; flex-direction: column; align-items: stretch; }
-  .sidebar { display: contents; }
-  .meter {
-    order: 1;
-    height: 420px;
-    padding: 32px 16px 32px 88px;
-    background: var(--panel);
-  }
-  .info { order: 2; max-width: none; padding: 40px var(--info-pad) 24px; --info-pad: 16px; }
-  .donate { order: 3; width: auto; padding: 32px 16px 48px; overflow: visible; background: var(--panel); }
-  .donate:has(.donate-form) { overflow: visible; }
-  .donate-form { height: var(--form-height); }
+/* Narrow screens: no room for side by side, so each row stacks, left
+   section first. In the form card, the thermometer goes above the form. */
+@media (max-width: 900px) {
+  .page { padding: 40px 16px 64px; }
+  .title-block { margin-bottom: 40px; }
+  .row,
+  .row-form { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
+  .card { padding: 16px; }
+  .form-card { flex-direction: column; }
+  .form-card .donate { flex: none; }
+  .meter { order: -1; height: 400px; }
 }

@@ -82,19 +82,17 @@ const money = new Intl.NumberFormat('en-US', {
 });
 
 const root = document.documentElement;
-const sidebar = document.querySelector('.sidebar');
 const thermometer = document.querySelector('.thermometer');
 const fill = document.querySelector('.fill');
 const scale = document.querySelector('.scale');
 const raisedEl = document.querySelector('.raised');
 const labelEl = document.querySelector('.raised-label');
 const donorsEl = document.querySelector('.donors');
-const content = document.querySelector('.content');
-const donateEl = document.querySelector('.donate');
+
 
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
-  root.style.setProperty('--panel', setting('PANEL_COLOR', '#6ABF4B'));
+  root.style.setProperty('--card', setting('CARD_COLOR', '#FCFBF5'));
   // Bottom to top, evenly spaced; the bulb is the first (bottom) color
   let colors = setting('THERMOMETER_COLORS', []).filter((c) => typeof c === 'string' && c.trim());
   if (!colors.length) colors = [setting('ACCENT_COLOR', '#6ABF4B')];
@@ -105,17 +103,22 @@ function applySettings() {
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
-  root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
-  root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT_ON_PHONES', 1000)) + 'px');
+  root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 900)) + 'px');
+  root.style.setProperty('--card-width', Math.max(300, setting('FORM_CARD_WIDTH', 700)) + 'px');
+  root.style.setProperty('--bottom-form-width', Math.max(300, setting('BOTTOM_FORM_WIDTH', 560)) + 'px');
+
+  // The page's layout
+  root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1200)) + 'px');
+  root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
+  root.style.setProperty('--column-gap', Math.max(0, setting('COLUMN_GAP', 64)) + 'px');
+  root.style.setProperty('--picture-gap', Math.max(0, setting('PICTURE_GAP', 64)) + 'px');
   root.style.setProperty('--fill-duration', setting('FILL_ANIMATION_MS', 1600) + 'ms');
-  sidebar.classList.toggle('scrolls', !setting('STAY_IN_PLACE', true));
-  document.body.classList.toggle('panel-right', setting('PANEL_SIDE', 'right') !== 'left');
 
   root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
   // 0 = as tall as the picture works out; any other number sets the height.
   const pictureHeight = Math.max(0, setting('PICTURE_HEIGHT', 0));
   root.style.setProperty('--picture-height', pictureHeight + 'px');
-  content.classList.toggle('set-picture-height', pictureHeight > 0);
+  document.querySelectorAll('.content').forEach((el) => el.classList.toggle('set-picture-height', pictureHeight > 0));
   root.style.setProperty('--picture-radius', Math.max(0, setting('PICTURE_CORNER_RADIUS', 12)) + 'px');
   // {banner} pictures: 0 = their own shape; any other number crops them to that height
   const bannerHeight = Math.max(0, setting('BANNER_HEIGHT', 0));
@@ -139,27 +142,45 @@ function showDonateForm() {
   if (!parts.includes('embed')) parts.splice(/^[a-z]{2}(-[a-z]{2})?$/i.test(parts[0] || '') ? 1 : 0, 0, 'embed');
   url.pathname = '/' + parts.join('/');
 
-  const frame = document.createElement('iframe');
-  frame.className = 'donate-form';
-  frame.title = 'Donation form powered by Zeffy';
-  frame.src = url.href;
-  frame.allow = 'payment';                    // Apple Pay / Google Pay
-  frame.setAttribute('allowpaymentrequest', ''); // the same, for older browsers
-  frame.setAttribute('allowtransparency', 'true');
-  donateEl.replaceChildren(frame);
+  // The same form goes in each place for it (the top card and the bottom)
+  document.querySelectorAll('.donate').forEach((spot) => {
+    const frame = document.createElement('iframe');
+    frame.className = 'donate-form';
+    frame.title = 'Donation form powered by Zeffy';
+    frame.src = url.href;
+    frame.allow = 'payment';                    // Apple Pay / Google Pay
+    frame.setAttribute('allowpaymentrequest', ''); // the same, for older browsers
+    frame.setAttribute('allowtransparency', 'true');
+    spot.replaceChildren(frame);
+  });
 }
 
-// The page text, from content.md. A # heading on the very first line is the
-// page's big title; everything else goes through markdownToHtml (markdown.js).
+// SIDE_PICTURE: the picture beside the text in the third row
+function showSidePicture() {
+  const file = setting('SIDE_PICTURE', '').trim();
+  if (!file) return;
+  const img = document.createElement('img');
+  img.src = file;
+  img.alt = setting('SIDE_PICTURE_WORDS', '');
+  img.addEventListener('error', () => console.warn(`SIDE_PICTURE in settings.md: couldn't load "${file}". Check the file is in the images folder and the name matches.`));
+  document.querySelector('.side-picture').replaceChildren(img);
+}
+
+// The text sections: each one's words come from the file named in its
+// data-md (the text folder), through markdownToHtml (markdown.js). In the
+// title's file, a # heading on the first line is the page's big title.
 function loadContent() {
-  return fetch('content.md', { cache: 'no-cache' })
-    .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))))
-    .then((md) => {
-      let title = '';
-      md = md.replace(/^\s*#\s+(.+?)\s*#*\s*(\n|$)/, (all, words) => { title = words; return ''; });
-      content.innerHTML = (title ? '<h1>' + markdownToHtml(title).replace(/^<p>|<\/p>$/g, '') + '</h1>\n' : '') + markdownToHtml(md);
-    })
-    .catch((err) => console.warn('content.md could not be loaded (' + err.message + '); showing the text in index.html instead.'));
+  return Promise.all([...document.querySelectorAll('[data-md]')].map((section) =>
+    fetch(section.dataset.md, { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))))
+      .then((md) => {
+        let title = '';
+        if (section.classList.contains('title-block')) {
+          md = md.replace(/^\s*#\s+(.+?)\s*#*\s*(\n|$)/, (all, words) => { title = words; return ''; });
+        }
+        section.innerHTML = (title ? '<h1>' + markdownToHtml(title).replace(/^<p>|<\/p>$/g, '') + '</h1>\n' : '') + markdownToHtml(md);
+      })
+      .catch((err) => console.warn(section.dataset.md + ' could not be loaded (' + err.message + ').'))));
 }
 
 // The fill's colors are spread over the whole tube, so it needs the tube's height
@@ -271,6 +292,7 @@ settingsReady.then(() => {
   loadFonts();
   applySettings();
   showDonateForm();
+  showSidePicture();
   return progress;
 }).then(render);
 

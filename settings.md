@@ -20,10 +20,10 @@ The accent color is used for the numbered-step circles in the page text. (The th
 ACCENT_COLOR = "#6BC04B"
 ```
 
-The background of the thermometer + pay panel.
+The background of the rounded cards the donation forms sit in.
 
 ```js
-PANEL_COLOR = "#FCFBF5"
+CARD_COLOR = "#FCFBF5"
 ```
 
 The page's background color, behind the info.
@@ -116,48 +116,64 @@ ANIMATE_ON_LOAD = true
 FILL_ANIMATION_MS = 1600
 ```
 
-## The thermometer + donation panel
+## The page layout
 
-The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. `""` shows a placeholder box instead.
+From top to bottom: the title, centered; text beside the donation form (with the thermometer to the form's right); the route map beside text; text beside a picture; two texts side by side; and the donation form again at the bottom. On narrow screens (phones, small tablets) each pair stacks, left one first, and the thermometer goes above the form.
+
+How wide the page can get, in pixels. On a wider screen there's empty space either side.
+
+```js
+PAGE_WIDTH = 1200
+```
+
+The space between one row of sections and the next, and between the two sections side by side in a row.
+
+```js
+ROW_GAP = 96
+COLUMN_GAP = 64
+```
+
+The space between the picture and the text beside it (instead of `COLUMN_GAP`).
+
+```js
+PICTURE_GAP = 64
+```
+
+The picture beside the text, from the `images` folder, like `"images/college_tour_students.jpg"`. `""` shows a placeholder box. The words describe it for people who can't see it.
+
+```js
+SIDE_PICTURE = ""
+SIDE_PICTURE_WORDS = ""
+```
+
+## The donation forms
+
+The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. It's used for both the form at the top and the one at the bottom. `""` shows placeholder boxes instead.
 
 ```js
 ZEFFY_FORM_LINK = ""
 ```
 
-On phones the form sits below the page text instead of beside it, and this is how tall it is there, in pixels. If the form gets cut off at the bottom, make it bigger.
+How tall the forms are, in pixels. A form longer than this scrolls inside itself. The thermometer beside the top form is the same height.
 
 ```js
-FORM_HEIGHT_ON_PHONES = 1000
+FORM_HEIGHT = 900
 ```
 
-Which side of the screen the thermometer and donation form sit on: `"right"` (the info is read first, then the form is right beside it) or `"left"` (the goal is the first thing people see).
+How wide the top card (the form and the thermometer) is, and how wide the bottom form's card is.
 
 ```js
-PANEL_SIDE = "right"
-```
-
-- `true` = the thermometer and donation form stay in place on the screen while the info scrolls.
-- `false` = they scroll away with the rest of the page.
-
-On narrow screens (phones, small tablets) there isn't room for side-by-side, so the page always stacks: thermometer, then the info, then the donation form.
-
-```js
-STAY_IN_PLACE = true
-```
-
-How wide the donation form's column is.
-
-```js
-PAY_PANEL_WIDTH = 420
+FORM_CARD_WIDTH = 700
+BOTTOM_FORM_WIDTH = 560
 ```
 
 ## Page text and pictures
 
-The words on the page live in `content.md`, next to this file. Open it in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
+Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md`, `beside-map.md`, `beside-picture.md`, `bottom-left.md` and `bottom-right.md`. Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
 
 How to write it:
 
-- The first line, starting with `# `, is the page's big title. The paragraph right under it is shown a little lighter, as a tagline.
+- In `title.md`, the first line, starting with `# `, is the page's big title. A paragraph right under it is shown a little lighter, as a tagline.
 - Leave an empty line between paragraphs. Each extra empty line adds a line's worth of space.
 - `# Words` on its own line is a heading. `## Words` is a centered heading, and the lines right under it are centered too (good for a name with a photo).
 - `**bold**`, `*italic*`, `***both***`.
@@ -168,14 +184,14 @@ How to write it:
 
 Pictures:
 
-- Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in `content.md`. The words in the square brackets are read aloud to people who can't see the picture.
+- Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in a text file. The words in the square brackets are read aloud to people who can't see the picture.
 - On a line of its own, a picture sits by itself, centered.
 - Add `{banner}` after it (`![words](images/x.jpg) {banner}`) to make it a banner: it runs the full width of the section, edge to edge, with square corners.
-- `!map!` on a line of its own shows the route map (see "The route map" below). `!map! {banner}` runs it the full width of the section.
+- `!map!` on a line of its own shows another copy of the route map (it already has its own spot, beside `beside-map.md`).
 - A picture from another website works too, as long as its address starts with `https://`.
 - Keep pictures under about 500 KB each (around 1500 pixels wide is plenty) so the page loads fast.
 
-Widest a picture can be, in pixels. The text column is 720 wide, so 720 fills it.
+Widest a picture in the text can be, in pixels. A picture never gets wider than its section.
 
 ```js
 PICTURE_WIDTH = 720
@@ -201,7 +217,7 @@ BANNER_HEIGHT = 0
 
 ## The route map
 
-The animated map of the tour route, shown wherever `!map!` is in `content.md`. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
+The animated map of the tour route, beside `text/beside-map.md`. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
 
 Positions are pixels on the satellite picture (`images/California-Satellite-Map.jpg`, 2114 wide and 2030 tall), counted from its top left corner. You don't have to measure them: turn on `MAP_EDIT_MODE` (below) and click the map.
 

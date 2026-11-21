@@ -10,45 +10,74 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="panel-right">
-  <div class="layout">
-    <!-- Thermometer + donation form, stays in place while the info scrolls
-         (which side it's on: PANEL_SIDE in settings.md) -->
-    <aside class="sidebar">
-      <!-- Numbers come from progress.json (updated by the GitHub Action) -->
-      <section class="meter" aria-label="Fundraising progress">
-        <div class="totals">
-          <p class="raised">$0</p>
-          <p class="raised-label">raised of $10,000</p>
-          <p class="donors"></p>
+<body>
+  <!-- Each text section's words come from its own file in the text folder
+       (named in data-md); what's written here only shows if it can't load. -->
+  <main class="page">
+    <header class="title-block content" data-md="text/title.md">
+      <h1>Rock Tree Sky</h1>
+    </header>
+
+    <!-- 1. Text | the donation form with the thermometer beside it -->
+    <section class="row row-form">
+      <div class="content" data-md="text/beside-form.md"></div>
+
+      <div class="card form-card">
+        <!-- Zeffy donation form: script.js puts it here from ZEFFY_FORM_LINK in settings.md -->
+        <div class="donate" aria-label="Donate">
+          <div class="form-placeholder">Zeffy donation form goes here<br>(add its link to ZEFFY_FORM_LINK in settings.md)</div>
         </div>
 
-        <div class="thermometer" role="progressbar" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="0" aria-label="Amount raised">
-          <div class="tube">
-            <div class="track">
-              <div class="fill"></div>
-              <div class="scale" aria-hidden="true"></div>
-            </div>
+        <!-- Numbers come from progress.json (updated by the GitHub Action) -->
+        <section class="meter" aria-label="Fundraising progress">
+          <div class="totals">
+            <p class="raised">$0</p>
+            <p class="raised-label">raised of $10,000</p>
+            <p class="donors"></p>
           </div>
-          <div class="bulb"><div class="bulb-fill"></div></div>
-        </div>
-      </section>
 
-      <!-- Zeffy donation form: script.js puts it here from ZEFFY_FORM_LINK in settings.md -->
-      <section class="donate" aria-label="Donate">
-        <div class="form-placeholder">Zeffy donation form goes here<br>(add its link to ZEFFY_FORM_LINK in settings.md)</div>
-      </section>
-    </aside>
-
-    <!-- The info, scrolls normally. Its text comes from content.md;
-         what's written here only shows if that can't load. -->
-    <main class="info">
-      <div class="content">
-        <h1>Rock Tree Sky</h1>
-        <p>Help us reach our goal.</p>
+          <div class="thermometer" role="progressbar" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="0" aria-label="Amount raised">
+            <div class="tube">
+              <div class="track">
+                <div class="fill"></div>
+                <div class="scale" aria-hidden="true"></div>
+              </div>
+            </div>
+            <div class="bulb"><div class="bulb-fill"></div></div>
+          </div>
+        </section>
       </div>
-    </main>
-  </div>
+    </section>
+
+    <!-- 2. The route map (map.js) | text -->
+    <section class="row">
+      <div class="map-col"><div class="route-map-slot"></div></div>
+      <div class="content" data-md="text/beside-map.md"></div>
+    </section>
+
+    <!-- 3. Text | a picture (SIDE_PICTURE in settings.md) -->
+    <section class="row row-picture">
+      <div class="content" data-md="text/beside-picture.md"></div>
+      <div class="side-picture">
+        <div class="picture-placeholder">Picture goes here<br>(put its file name in SIDE_PICTURE in settings.md)</div>
+      </div>
+    </section>
+
+    <!-- 4. Text | text -->
+    <section class="row">
+      <div class="content" data-md="text/bottom-left.md"></div>
+      <div class="content" data-md="text/bottom-right.md"></div>
+    </section>
+
+    <!-- 5. The donation form again, at the bottom -->
+    <section class="bottom-form">
+      <div class="card">
+        <div class="donate" aria-label="Donate">
+          <div class="form-placeholder">Zeffy donation form goes here<br>(add its link to ZEFFY_FORM_LINK in settings.md)</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script src="markdown.js"></script>
   <script src="map.js"></script>

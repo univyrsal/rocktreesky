@@ -5,8 +5,8 @@ A single fundraising page hosted on GitHub Pages: a thermometer tracking progres
 ## Files
 
 - `index.html`, `style.css`, `script.js`, `markdown.js`: the page
-- `map.js`: the animated route map (`!map!` in `content.md`; the route is in `settings.md`), drawn over `images/California-Satellite-Map.jpg`. `images/California-Satellite-Map-mask.png` marks the land, so the sea and background show the page color
-- `content.md`: the page text (pictures go in `images/`; how to write it is in `settings.md`)
+- `map.js`: the animated route map (beside `text/beside-map.md`; the route is in `settings.md`), drawn over `images/California-Satellite-Map.jpg`. `images/California-Satellite-Map-mask.png` marks the land, so the sea and background show the page color
+- `text/`: the words for each text section, one file each, named for where it sits (`title.md`, `beside-form.md`, `beside-map.md`, `beside-picture.md`, `bottom-left.md`, `bottom-right.md`). How to write them is in `settings.md`
 - `settings.md`: colors, sizes and toggles you can edit (see the notes inside)
 - `progress.json`: raised / goal / donors, read by the thermometer
 - `scripts/fetch-progress.mjs` + `.github/workflows/update-progress.yml`: every 15 minutes, pulls the total from Zeffy and commits `progress.json` if it changed
