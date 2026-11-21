@@ -313,12 +313,38 @@ function slideInBoxes() {
 const settingsReady = loadSettings();
 const pageText = loadContent([...document.querySelectorAll('[data-md]')]);
 
+// TIP_NOTE: a note that pops up beside the form when someone presses its
+// Continue button. The form is a Givebutter page inside a frame, so the
+// page can't see the click itself, but Givebutter tells the page about it
+// with a message ("donation.button.next").
+function watchForContinue() {
+  const words = setting('TIP_NOTE', '').trim();
+  const spot = document.querySelector('.row-top .donate.has-widget');
+  if (!words || !spot) return;
+  let closed = false;
+  addEventListener('message', (e) => {
+    if (e.origin !== 'https://givebutter.com' || closed) return;
+    const data = e.data;
+    if (!data || typeof data !== 'object' || !data.givebutter || data.event !== 'donation.button.next') return;
+    if (spot.querySelector('.tip-note')) return;   // already showing
+    const note = document.createElement('aside');
+    note.className = 'tip-note';
+    note.setAttribute('role', 'status');
+    note.style.setProperty('--tip-note-top', Math.max(0, setting('TIP_NOTE_TOP', 150)) + 'px');
+    note.innerHTML = markdownToHtml(words) + '<button type="button" class="tip-note-close" aria-label="Close">×</button>';
+    note.querySelector('.tip-note-close').addEventListener('click', () => { closed = true; note.remove(); });
+    spot.prepend(note);
+    requestAnimationFrame(() => requestAnimationFrame(() => note.classList.add('shown')));
+  });
+}
+
 // The quotes are placed from the settings, then filled in like the other text
 const quotesText = settingsReady.then(() => {
   const quotes = placeQuotes();
   loadFonts();
   applySettings();
   showDonateForm();
+  watchForContinue();
   showLogo();
   return loadContent(quotes);
 });

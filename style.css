@@ -207,6 +207,58 @@ body {
 .donate .gb-form { display: block; flex: 1; min-width: 0; }
 .donate .gb-thermometer { display: block; flex: none; }   /* to the right of the form */
 
+/* TIP_NOTE: pops up to the left of the form when Continue is pressed,
+   pointing at it, so it never covers the form */
+.donate { position: relative; }
+
+.tip-note {
+  position: absolute;
+  top: var(--tip-note-top, 110px);
+  right: calc(100% + 20px);
+  z-index: 5;
+  width: 260px;
+  padding: 14px 36px 14px 18px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: var(--box-color, #fff);
+  font-size: .9rem;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity .3s, transform .3s cubic-bezier(.2, .8, .2, 1);
+}
+
+.tip-note.shown { opacity: 1; transform: none; }
+.tip-note p { margin: 0; }
+
+/* The little point toward the form */
+.tip-note::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  right: -9px;
+  width: 14px;
+  height: 14px;
+  border: solid var(--accent);
+  border-width: 2px 2px 0 0;
+  background: var(--box-color, #fff);
+  transform: rotate(45deg);
+}
+
+.tip-note-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 2px 6px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .form-placeholder {
   height: 100%;
   display: grid;
@@ -599,6 +651,9 @@ h1 {
   /* No room for the thermometer beside the form: it goes under it */
   .donate.has-widget { flex-direction: column; align-items: center; }
   .donate .gb-form { flex: none; width: 100%; }
+  /* The tip note goes above the form, pointing down at it */
+  .tip-note { position: relative; top: auto; right: auto; width: 100%; margin-bottom: 4px; transform: translateY(-8px); }
+  .tip-note::after { top: auto; bottom: -9px; right: auto; left: 50%; margin-left: -7px; transform: rotate(135deg); }
   .section-title,
   .section-picture { margin-bottom: 0; }
   .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */

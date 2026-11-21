@@ -181,6 +181,18 @@ The words in the placeholder box. `\n` starts a new line, like `"Donations open 
 FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc) once I have the bank and routing number."
 ```
 
+A small note that pops up when someone presses Continue in the donation form, to the left of the form, pointing at it (above the form on phones). It never covers the form, and it has an × to close it. `**bold**` works. `""` = no note.
+
+```js
+TIP_NOTE = 'You have the option to pay 0% in transaction fees. To do that click "15%" then "other" then set the tip amount to $0.00'
+```
+
+How far down from the top of the form the note sits, in pixels (where it lines up with the tip box).
+
+```js
+TIP_NOTE_TOP = 150
+```
+
 How wide the form and the thermometer are together, and how tall the placeholder box is, in pixels. (The Givebutter widgets set their own heights.)
 
 ```js
