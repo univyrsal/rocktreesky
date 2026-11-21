@@ -8,7 +8,8 @@
   --card: #fcfbf5;                /* settings.md: CARD_COLOR */
   --thermometer-width: 56px;      /* settings.md: THERMOMETER_WIDTH */
   --form-height: 900px;           /* settings.md: FORM_HEIGHT */
-  --page-width: 1200px;           /* settings.md: PAGE_WIDTH */
+  --page-width: 1600px;           /* settings.md: PAGE_WIDTH */
+  --side-space: 96px;             /* settings.md: PAGE_SIDE_SPACE */
   --row-gap: 96px;                /* settings.md: ROW_GAP */
   --column-gap: 64px;             /* settings.md: COLUMN_GAP */
   --picture-gap: 64px;            /* settings.md: PICTURE_GAP */
@@ -38,10 +39,14 @@ body {
 
 /* The page: a centered column of rows, each with two sections side by side */
 .page {
-  max-width: var(--page-width);
+  max-width: calc(var(--page-width) + 2 * var(--side-space));
   margin: 0 auto;
-  padding: 56px 32px 96px;
+  padding: 56px var(--side-space) 96px;
 }
+
+/* HIDE_SCROLLBAR: no scroll bar, but the page still scrolls */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 
 .title-block {
   margin-bottom: 56px;

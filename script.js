@@ -108,7 +108,9 @@ function applySettings() {
   root.style.setProperty('--bottom-form-width', Math.max(300, setting('BOTTOM_FORM_WIDTH', 560)) + 'px');
 
   // The page's layout
-  root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1200)) + 'px');
+  root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1600)) + 'px');
+  root.style.setProperty('--side-space', Math.max(0, setting('PAGE_SIDE_SPACE', 96)) + 'px');
+  root.classList.toggle('no-scrollbar', setting('HIDE_SCROLLBAR', true));
   root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
   root.style.setProperty('--column-gap', Math.max(0, setting('COLUMN_GAP', 64)) + 'px');
   root.style.setProperty('--picture-gap', Math.max(0, setting('PICTURE_GAP', 64)) + 'px');

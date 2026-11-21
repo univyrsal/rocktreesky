@@ -23,13 +23,13 @@ ACCENT_COLOR = "#6BC04B"
 The background of the rounded cards the donation forms sit in.
 
 ```js
-CARD_COLOR = "#FCFBF5"
+CARD_COLOR = "#CCCCCC"
 ```
 
 The page's background color, behind the info.
 
 ```js
-BACKGROUND_COLOR = "#CCCCCC"
+BACKGROUND_COLOR = "#FCFBF4"
 ```
 
 The color of the words.
@@ -120,10 +120,23 @@ FILL_ANIMATION_MS = 1600
 
 From top to bottom: the title, centered; text beside the donation form (with the thermometer to the form's right); the route map beside text; text beside a picture; two texts side by side; and the donation form again at the bottom. On narrow screens (phones, small tablets) each pair stacks, left one first, and the thermometer goes above the form.
 
-How wide the page can get, in pixels. On a wider screen there's empty space either side.
+How far the page's contents stay from the left and right edges of the screen, in pixels (phones always use 16).
 
 ```js
-PAGE_WIDTH = 1200
+PAGE_SIDE_SPACE = 96
+```
+
+The widest the contents can get, in pixels. On a screen wider than this plus the side space, the extra is left empty either side.
+
+```js
+PAGE_WIDTH = 1600
+```
+
+- `true` = the page's scroll bar is hidden (the page still scrolls with the mouse wheel, trackpad, touch or keyboard).
+- `false` = the browser's normal scroll bar.
+
+```js
+HIDE_SCROLLBAR = true
 ```
 
 The space between one row of sections and the next, and between the two sections side by side in a row.
@@ -142,7 +155,7 @@ PICTURE_GAP = 64
 The picture beside the text, from the `images` folder, like `"images/college_tour_students.jpg"`. `""` shows a placeholder box. The words describe it for people who can't see it.
 
 ```js
-SIDE_PICTURE = ""
+SIDE_PICTURE = "images/college_tour_students.jpg"
 SIDE_PICTURE_WORDS = ""
 ```
 
@@ -255,7 +268,7 @@ The key's title and the note under its list of stops. `""` leaves either out.
 
 ```js
 ROUTE_TITLE = "Route from Ojai"
-ROUTE_NOTE = "Approx. driving route (US-101, CA-1, CA-17, I-280, I-880)"
+ROUTE_NOTE = ""
 ```
 
 Where the key's top left corner goes on the map. `[]` puts it under the map instead. (On a small screen it always goes under the map.)
