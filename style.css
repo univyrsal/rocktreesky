@@ -12,9 +12,9 @@
   --side-space: 96px;             /* settings.md: PAGE_SIDE_SPACE */
   --text-size: 17px;              /* settings.md: TEXT_SIZE */
   --title-size: 56px;             /* settings.md: TITLE_SIZE */
+  --box-gap: 64px;                /* settings.md: BOX_GAP */
   --row-gap: 96px;                /* settings.md: ROW_GAP */
   --column-gap: 64px;             /* settings.md: COLUMN_GAP */
-  --picture-gap: 64px;            /* settings.md: PICTURE_GAP */
   --info-pad: 0px;                /* a {banner} runs this far past its section's sides */
   --heading-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;  /* settings.md: HEADING_FONT */
   --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
@@ -105,7 +105,7 @@ body {
 /* BOXED_TEXT: a text section as rounded boxes (settings.md: BOX_COLOR),
    each sliding in from its side when it scrolls into view */
 .text-box {
-  margin-bottom: 32px;
+  margin-bottom: var(--box-gap);
   padding: 28px 32px;
   border-radius: 20px;
   background: var(--box-color);
@@ -123,12 +123,9 @@ body {
 .text-box > :first-child { margin-top: 0; }
 .text-box > :last-child { margin-bottom: 0; }
 
-/* BOX_SCATTER: each box sits a little off from where it would be */
-.text-box { transform: translate(var(--nudge-x, 0px), var(--nudge-y, 0px)); }
-
 .text-box.waiting {
   opacity: 0;
-  transform: translate(calc(var(--nudge-x, 0px) + var(--slide, -1) * 80px), var(--nudge-y, 0px));
+  transform: translateX(calc(var(--slide, -1) * 80px));
 }
 
 /* MAP_CARD: the route map in a box like the BOXED_TEXT ones */
@@ -152,32 +149,30 @@ body {
 /* The top row: the map takes what the text and the form leave */
 .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, var(--form-width)); }
 
-/* Text beside the picture has its own gap (settings.md: PICTURE_GAP) */
-.row-picture { column-gap: var(--picture-gap); }
-
 /* The map in its own section lines up with the top of the text beside it */
 .map-col .route-map { margin: 0; }
 
 /* So a {banner} picture knows how wide its section is */
 .row > * { container-type: inline-size; }
 
-/* The picture beside the text (settings.md: SIDE_PICTURE) */
-.side-picture img {
+/* SECTIONS: a row's picture, under its title and across the whole row
+   (settings.md: SECTION_PICTURE_HEIGHT; 0 keeps the picture's own shape) */
+.section-picture {
+  grid-column: 1 / -1;
   display: block;
   width: 100%;
-  height: auto;
+  height: var(--section-picture-height, auto);
+  margin-bottom: 56px;
+  object-fit: cover;
+  object-position: center;
   border-radius: var(--picture-radius, 12px);
 }
 
-.picture-placeholder {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 4 / 3;
-  padding: 16px;
-  border: 2px dashed var(--muted);
-  border-radius: var(--picture-radius, 12px);
-  color: var(--muted);
-  text-align: center;
+/* TEXT_CARDS: a text section in a rounded box like the quotes */
+.text-card {
+  padding: 28px 32px;
+  border-radius: 20px;
+  background: var(--box-color);
 }
 
 /* Donation form: FORM_HEIGHT tall, scrolling inside itself if it's longer */
@@ -547,8 +542,7 @@ h1 {
    under the map, with the form to their right */
 @media (max-width: 1500px) {
   .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--form-width)); row-gap: 40px; }
-  .row-top .donate { grid-column: 2; grid-row: 1 / span 2; }
-  .row-top.has-title .donate { grid-row: 2 / span 2; }
+  .row-top .donate { grid-column: 2; grid-row: var(--form-row, 1) / span 2; }
 }
 
 /* Narrow screens: no room for side by side, so each row stacks, left
@@ -561,7 +555,8 @@ h1 {
   .logo img { height: min(var(--logo-height), 44px); }
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
-  .row-top .donate,
-  .row-top.has-title .donate { grid-column: auto; grid-row: auto; }
-  .section-title { margin-bottom: 0; }
+  .row-top .donate { grid-column: auto; grid-row: auto; }
+  .section-title,
+  .section-picture { margin-bottom: 0; }
+  .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */
 }

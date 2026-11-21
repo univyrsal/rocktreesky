@@ -94,7 +94,7 @@ FALLBACK_FONT = "Nunito"
 
 ## The page layout
 
-From top to bottom: the title, centered; the route map, text and the donation form side by side; text beside a picture; and two texts side by side. On a mid-size screen the top row's text goes under the map. On narrow screens (phones, small tablets) everything stacks, left one first.
+From top to bottom: the title, centered; the route map, text and the donation form side by side; then the student quotes, in two columns. On a mid-size screen the top row's text goes under the map. On narrow screens (phones, small tablets) everything stacks, left one first.
 
 How far the page's contents stay from the left and right edges of the screen, in pixels (phones always use 16).
 
@@ -128,16 +128,16 @@ ROW_GAP = 96
 COLUMN_GAP = 64
 ```
 
-Each row's color and title. The rows are `top` (the map, text and form), `middle` (text and the picture) and `bottom` (the two texts).
+Each row's color, title and picture. The rows are `top` (the map, text and form) and `bottom` (the student quotes).
 
 - `color`: fills the row's background out to the edges of the screen. `"accent"` uses `ACCENT_COLOR`. `""` = no color.
 - `title`: a heading centered across the top of the row. `""` = none.
+- `picture`: a picture from the `images` folder, under the title and across the whole row. `""` = none. `pictureWords` describe it for people who can't see it.
 
 ```js
 SECTIONS = {
   top:    { color: "", title: "" },
-  middle: { color: "", title: "" },
-  bottom: { color: "", title: "Hear From The Students" },
+  bottom: { color: "", title: "Hear From The Students", picture: "images/college_tour_students.jpg", pictureWords: "" },
 }
 ```
 
@@ -148,17 +148,10 @@ SECTION_PADDING = 64
 SECTION_TITLE_SIZE = 36
 ```
 
-The space between the picture and the text beside it (instead of `COLUMN_GAP`).
+How tall a row's picture is, in pixels. It fills the row's width and is cropped to this height, keeping the middle. `0` = the picture's own shape.
 
 ```js
-PICTURE_GAP = 64
-```
-
-The picture beside the text, from the `images` folder, like `"images/college_tour_students.jpg"`. `""` shows a placeholder box. The words describe it for people who can't see it.
-
-```js
-SIDE_PICTURE = "images/college_tour_students.jpg"
-SIDE_PICTURE_WORDS = ""
+SECTION_PICTURE_HEIGHT = 480
 ```
 
 ## The donation form
@@ -184,7 +177,7 @@ FORM_WIDTH = 480
 
 ## Page text and pictures
 
-Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md` (between the map and the form), `beside-picture.md`, `bottom-left.md` and `bottom-right.md`. Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
+Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md` (between the map and the form), and `bottom-left.md` and `bottom-right.md` (the student quotes). Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
 
 How to write it:
 
@@ -231,10 +224,16 @@ How far up the screen a box's top has to come before it slides in, in percent of
 BOX_START = 25
 ```
 
-How far each box is nudged off line, at random, in pixels (up to this much up or down and left or right; less on phones). `0` = all lined up.
+The space between one box and the next, in pixels.
 
 ```js
-BOX_SCATTER = 20
+BOX_GAP = 64
+```
+
+Other text sections shown as one rounded box in `BOX_COLOR`, by file name. These don't slide in. `[]` = none.
+
+```js
+TEXT_CARDS = ["beside-form.md"]
 ```
 
 Pictures:
@@ -278,7 +277,7 @@ The animated map of the tour route, at the top left. When it scrolls into view, 
 - `false` = just the map on the page.
 
 ```js
-MAP_CARD = true
+MAP_CARD = false
 ```
 
 Positions are pixels on the satellite picture (`images/California-Satellite-Map.jpg`, 2114 wide and 2030 tall), counted from its top left corner. You don't have to measure them: turn on `MAP_EDIT_MODE` (below) and click the map.

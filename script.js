@@ -108,12 +108,22 @@ function applySettings() {
   root.classList.toggle('no-scrollbar', setting('HIDE_SCROLLBAR', true));
   root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
   root.style.setProperty('--column-gap', Math.max(0, setting('COLUMN_GAP', 64)) + 'px');
-  root.style.setProperty('--picture-gap', Math.max(0, setting('PICTURE_GAP', 64)) + 'px');
   root.style.setProperty('--section-padding', Math.max(0, setting('SECTION_PADDING', 64)) + 'px');
   root.style.setProperty('--section-title-size', Math.max(12, setting('SECTION_TITLE_SIZE', 36)) + 'px');
+  // 0 = the picture's own shape
+  const sectionPictureHeight = Math.max(0, setting('SECTION_PICTURE_HEIGHT', 480));
+  root.style.setProperty('--section-picture-height', sectionPictureHeight > 0 ? sectionPictureHeight + 'px' : 'auto');
   showSections();
-  // MAP_CARD: the route map in a rounded box like the BOXED_TEXT ones
-  document.querySelector('.map-col')?.classList.toggle('map-card', setting('MAP_CARD', true));
+
+  // The rounded boxes: the quotes (BOXED_TEXT), TEXT_CARDS and MAP_CARD
+  const boxColor = setting('BOX_COLOR', '#EDEBD5').trim();
+  root.style.setProperty('--box-color', boxColor.toLowerCase() === 'accent' ? 'var(--accent)' : boxColor);
+  root.style.setProperty('--box-gap', Math.max(0, setting('BOX_GAP', 64)) + 'px');
+  const cards = setting('TEXT_CARDS', []).map(sectionName);
+  document.querySelectorAll('[data-md]').forEach((el) => {
+    el.classList.toggle('text-card', cards.includes(sectionName(el.dataset.md)));
+  });
+  document.querySelector('.map-col')?.classList.toggle('map-card', setting('MAP_CARD', false));
 
   root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
   // 0 = as tall as the picture works out; any other number sets the height.
@@ -126,23 +136,34 @@ function applySettings() {
   root.style.setProperty('--banner-height', bannerHeight > 0 ? bannerHeight + 'px' : 'auto');
 }
 
-// SECTIONS: each row's color ("accent" = ACCENT_COLOR) and title
+// SECTIONS: each row's color ("accent" = ACCENT_COLOR), title, and a
+// picture under the title
 function showSections() {
   const sections = setting('SECTIONS', {});
   document.querySelectorAll('.row[data-section]').forEach((row) => {
-    const { color = '', title = '' } = sections[row.dataset.section] || {};
+    const { color = '', title = '', picture = '', pictureWords = '' } = sections[row.dataset.section] || {};
     const c = String(color).trim();
     row.classList.toggle('colored', !!c);
     row.style.setProperty('--section-color', c.toLowerCase() === 'accent' ? 'var(--accent)' : c);
-    row.querySelector(':scope > .section-title')?.remove();
+    row.querySelectorAll(':scope > .section-title, :scope > .section-picture').forEach((el) => el.remove());
     const t = String(title).trim();
-    row.classList.toggle('has-title', !!t);
+    const file = String(picture).trim();
+    if (file) {
+      const img = document.createElement('img');
+      img.className = 'section-picture';
+      img.src = file;
+      img.alt = String(pictureWords);
+      img.addEventListener('error', () => console.warn(`SECTIONS in settings.md: couldn't load the picture "${file}". Check the file is in the images folder and the name matches.`));
+      row.prepend(img);
+    }
     if (t) {
       const h = document.createElement('h2');
       h.className = 'section-title';
       h.textContent = t;
       row.prepend(h);
     }
+    // In the top row on a mid-size screen, the form starts below these
+    row.style.setProperty('--form-row', 1 + !!t + !!file);
   });
 }
 
@@ -201,17 +222,6 @@ function showLogo() {
   }).observe(img);
 }
 
-// SIDE_PICTURE: the picture beside the text in the second row
-function showSidePicture() {
-  const file = setting('SIDE_PICTURE', '').trim();
-  if (!file) return;
-  const img = document.createElement('img');
-  img.src = file;
-  img.alt = setting('SIDE_PICTURE_WORDS', '');
-  img.addEventListener('error', () => console.warn(`SIDE_PICTURE in settings.md: couldn't load "${file}". Check the file is in the images folder and the name matches.`));
-  document.querySelector('.side-picture').replaceChildren(img);
-}
-
 // The text sections: each one's words come from the file named in its
 // data-md (the text folder), through markdownToHtml (markdown.js). In the
 // title's file, a # heading on the first line is the page's big title.
@@ -253,22 +263,8 @@ function loadContent(settingsReady) {
 
 // BOXED_TEXT boxes slide in from the side they're on as they scroll into view
 function slideInBoxes() {
-  root.style.setProperty('--box-color', (() => {
-    const c = setting('BOX_COLOR', '#EDEBD5').trim();
-    return c.toLowerCase() === 'accent' ? 'var(--accent)' : c;
-  })());
   root.style.setProperty('--box-slide-ms', Math.max(0, setting('BOX_ANIMATION_MS', 700)) + 'ms');
   const boxes = [...document.querySelectorAll('.boxed .text-box')];
-
-  // BOX_SCATTER: each box nudged a random amount up, down, left or right
-  // (less on a phone, where there's little room either side)
-  const scatter = Math.max(0, setting('BOX_SCATTER', 20)) * (innerWidth <= 900 ? 0.4 : 1);
-  const nudge = () => Math.round((Math.random() * 2 - 1) * scatter) + 'px';
-  boxes.forEach((box) => {
-    box.style.setProperty('--nudge-x', nudge());
-    box.style.setProperty('--nudge-y', nudge());
-  });
-
   if (!boxes.length || !setting('BOX_ANIMATION', true)) return;
 
   boxes.forEach((box, i) => {
@@ -301,7 +297,6 @@ settingsReady.then(() => {
   loadFonts();
   applySettings();
   showDonateForm();
-  showSidePicture();
   showLogo();
 });
 
