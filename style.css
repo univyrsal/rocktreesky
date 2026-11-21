@@ -6,7 +6,7 @@
   --stone: #dcd6cc;
   --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
   --form-height: 720px;           /* settings.md: FORM_HEIGHT */
-  --form-width: 480px;            /* settings.md: FORM_WIDTH */
+  --form-width: 600px;            /* settings.md: FORM_WIDTH */
   --top-text-width: 300px;        /* settings.md: TOP_TEXT_WIDTH */
   --page-width: 1600px;           /* settings.md: PAGE_WIDTH */
   --side-space: 96px;             /* settings.md: PAGE_SIDE_SPACE */
@@ -198,9 +198,14 @@ body {
 /* The donation form's spot: the placeholder box is FORM_HEIGHT tall; the
    Givebutter widget sets its own height as it changes */
 .donate { height: var(--form-height); }
-.donate.has-widget { height: auto; }
-.donate givebutter-widget { display: block; width: 100%; }
-.donate givebutter-widget + givebutter-widget { margin-top: 16px; }   /* a list of widgets */
+.donate.has-widget {
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.donate .gb-form { display: block; flex: 1; min-width: 0; }
+.donate .gb-thermometer { display: block; flex: none; }   /* to the right of the form */
 
 .form-placeholder {
   height: 100%;
@@ -591,6 +596,9 @@ h1 {
   .row-top > .content { order: -2; }
   /* The map runs right to the edges of the screen, as big as it can be */
   .map-col:not(.map-card) { margin-inline: -16px; }
+  /* No room for the thermometer beside the form: it goes under it */
+  .donate.has-widget { flex-direction: column; align-items: center; }
+  .donate .gb-form { flex: none; width: 100%; }
   .section-title,
   .section-picture { margin-bottom: 0; }
   .section-picture { max-height: 75vw; }   /* not a tall sliver on a phone */

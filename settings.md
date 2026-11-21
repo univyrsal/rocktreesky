@@ -162,27 +162,30 @@ SECTION_PICTURE_HEIGHT = 480
 
 ## The donation form
 
-The Givebutter donation form. Givebutter's embed code has two parts:
+The Givebutter widgets. Each widget's embed code (in Givebutter: the campaign → Sharing → Widgets) has two parts:
 
 - `GIVEBUTTER_ACCOUNT`: the `acct=` part of the `<script>` line (your Givebutter account, the same for every widget).
-- `GIVEBUTTER_WIDGET`: the widget's ID, from the `<givebutter-widget id="...">` line (in Givebutter: the campaign → Sharing → Widgets). You can paste that whole line here between the quotes. For more than one widget stacked top to bottom (like a goal bar above a donation form), list them: `["gMYZav", "abc123"]`. `""` shows a placeholder box instead.
+- The widget's ID, from the `<givebutter-widget id="...">` line. You can paste that whole line between the quotes instead.
+
+`GIVEBUTTER_FORM` is the donation form, and `GIVEBUTTER_THERMOMETER` is the thermometer (a Goal Bar widget set to Thermometer), shown to the right of the form. `""` leaves either out; with neither, a placeholder box shows instead.
 
 ```js
 GIVEBUTTER_ACCOUNT = "ntw9fFA5tDQHtDt7"
-GIVEBUTTER_WIDGET = "gMYZav"
+GIVEBUTTER_FORM = "jNKm4w"
+GIVEBUTTER_THERMOMETER = "gMYZav"
 ```
 
-The words in the placeholder box while `GIVEBUTTER_WIDGET` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
+The words in the placeholder box. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
 
 ```js
 FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc) once I have the bank and routing number."
 ```
 
-How wide the form is, and how tall the placeholder box is, in pixels. (The Givebutter form sets its own height.)
+How wide the form and the thermometer are together, and how tall the placeholder box is, in pixels. (The Givebutter widgets set their own heights.)
 
 ```js
 FORM_HEIGHT = 700
-FORM_WIDTH = 480
+FORM_WIDTH = 600
 ```
 
 ## Page text and pictures

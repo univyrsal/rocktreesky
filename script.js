@@ -92,7 +92,7 @@ function applySettings() {
   root.style.setProperty('--title-bar-radius', Math.max(0, setting('TITLE_BAR_RADIUS', 20)) + 'px');
   root.style.setProperty('--logo-height', Math.max(16, setting('LOGO_HEIGHT', 72)) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
-  root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
+  root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 600)) + 'px');
   root.style.setProperty('--top-text-width', Math.max(120, setting('TOP_TEXT_WIDTH', 300)) + 'px');
 
   // The page's layout
@@ -169,17 +169,21 @@ function showSections() {
   });
 }
 
-// The Givebutter donation widget (settings.md: GIVEBUTTER_ACCOUNT and
-// GIVEBUTTER_WIDGET). Givebutter's script turns each <givebutter-widget>
-// tag into the form.
+// The Givebutter widgets (settings.md: GIVEBUTTER_ACCOUNT, GIVEBUTTER_FORM
+// and GIVEBUTTER_THERMOMETER): the donation form, with the thermometer to
+// its right. Givebutter's script turns each <givebutter-widget> tag into
+// the real thing.
 function showDonateForm() {
   const account = setting('GIVEBUTTER_ACCOUNT', '').trim();
-  // One widget or a list of them, top to bottom. Each is its ID, or the
-  // whole <givebutter-widget id="..."> tag pasted in.
-  const raw = window.GIVEBUTTER_WIDGET;
-  const pasted = (Array.isArray(raw) ? raw : [raw]).filter((w) => typeof w === 'string' && w.trim()).map((w) => w.trim());
-  const widgets = pasted.map((w) => (w.match(/id\s*=\s*["']?([\w-]+)/i) || [])[1] || (/^[\w-]+$/.test(w) ? w : '')).filter(Boolean);
-  if (pasted.length > widgets.length) console.warn('GIVEBUTTER_WIDGET in settings.md: each one should be a widget\'s ID or its <givebutter-widget id="..."> tag; skipping the ones that aren\'t.');
+  // Each is the widget's ID, or the whole <givebutter-widget id="..."> tag pasted in
+  const widgetId = (name) => {
+    const pasted = setting(name, '').trim();
+    const id = (pasted.match(/id\s*=\s*["']?([\w-]+)/i) || [])[1] || (/^[\w-]+$/.test(pasted) ? pasted : '');
+    if (pasted && !id) console.warn(`${name} in settings.md should be the widget's ID or its <givebutter-widget id="..."> tag.`);
+    return id;
+  };
+  const widgets = [['gb-form', widgetId('GIVEBUTTER_FORM')], ['gb-thermometer', widgetId('GIVEBUTTER_THERMOMETER')]]
+    .filter(([, id]) => id);
   if (!account || !widgets.length) {
     // FORM_PLACEHOLDER: the words in the box until there's a form
     const words = setting('FORM_PLACEHOLDER', 'Donation form goes here');
@@ -192,9 +196,10 @@ function showDonateForm() {
   document.head.appendChild(script);
 
   document.querySelectorAll('.donate').forEach((spot) => {
-    spot.replaceChildren(...widgets.map((id) => {
+    spot.replaceChildren(...widgets.map(([cls, id]) => {
       const tag = document.createElement('givebutter-widget');
       tag.id = id;
+      tag.className = cls;
       return tag;
     }));
     spot.classList.add('has-widget');
