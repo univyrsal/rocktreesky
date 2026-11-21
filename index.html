@@ -9,15 +9,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <!-- The tab icon: the same logo as rocktreesky.org -->
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/favicon-192.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <!-- The route map's pictures start downloading straight away, before the
+       settings and text have loaded (map.js waits for them before drawing) -->
+  <link rel="preload" as="image" href="images/California-Satellite-Map.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="images/California-Satellite-Map-mask.png" fetchpriority="high">
 </head>
 <body>
   <!-- Each text section's words come from its own file in the text folder
        (named in data-md); what's written here only shows if it can't load. -->
-  <!-- LOGO_BLACK: turns every color in the logo black and makes see-through
-       parts solid (the alpha line doubles how opaque each pixel is) -->
+  <!-- LOGO_BLACK / LOGO_TEXT_COLOR: paints the logo one solid color (script.js
+       sets the flood-color). The see-through parts of the logo are made solid
+       first: the alpha line doubles how opaque each pixel is. -->
   <svg width="0" height="0" style="position: absolute" aria-hidden="true">
-    <filter id="logo-black" color-interpolation-filters="sRGB">
-      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 2 0"/>
+    <filter id="logo-tint" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 2 0" result="solid"/>
+      <feFlood class="logo-tint-color" flood-color="#000"/>
+      <feComposite in2="solid" operator="in"/>
     </filter>
   </svg>
 
@@ -45,10 +56,11 @@
       </div>
     </section>
 
-    <!-- 2. Text | text (the student quotes) -->
-    <section class="row" data-section="bottom">
-      <div class="content" data-md="text/bottom-left.md"></div>
-      <div class="content" data-md="text/bottom-right.md"></div>
+    <!-- 2. The student quotes: one file each in text/quotes, placed by QUOTES in settings.md -->
+    <section class="row quotes" data-section="bottom">
+      <div class="quote-col" data-side="left"></div>
+      <div class="quote-col" data-side="right"></div>
+      <div class="quote-middle"></div>
     </section>
   </main>
 

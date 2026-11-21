@@ -89,6 +89,8 @@ function applySettings() {
   const barText = setting('TITLE_BAR_TEXT_COLOR', '').trim();
   if (barColor) root.style.setProperty('--title-bar-color', barColor);
   if (barText) root.style.setProperty('--title-bar-text', barText);
+  root.style.setProperty('--title-bar-radius', Math.max(0, setting('TITLE_BAR_RADIUS', 20)) + 'px');
+  root.style.setProperty('--title-bar-margin', Math.max(0, setting('TITLE_BAR_MARGIN', 16)) + 'px');
   root.style.setProperty('--logo-height', Math.max(16, setting('LOGO_HEIGHT', 72)) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
   root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
@@ -115,7 +117,7 @@ function applySettings() {
   root.style.setProperty('--section-picture-height', sectionPictureHeight > 0 ? sectionPictureHeight + 'px' : 'auto');
   showSections();
 
-  // The rounded boxes: the quotes (BOXED_TEXT), TEXT_CARDS and MAP_CARD
+  // The rounded boxes: the quotes (QUOTES), TEXT_CARDS and MAP_CARD
   const boxColor = setting('BOX_COLOR', '#EDEBD5').trim();
   root.style.setProperty('--box-color', boxColor.toLowerCase() === 'accent' ? 'var(--accent)' : boxColor);
   root.style.setProperty('--box-gap', Math.max(0, setting('BOX_GAP', 64)) + 'px');
@@ -151,6 +153,7 @@ function showSections() {
     if (file) {
       const img = document.createElement('img');
       img.className = 'section-picture';
+      img.loading = 'lazy';   // not until it's nearly on screen, so the map loads first
       img.src = file;
       img.alt = String(pictureWords);
       img.addEventListener('error', () => console.warn(`SECTIONS in settings.md: couldn't load the picture "${file}". Check the file is in the images folder and the name matches.`));
@@ -215,7 +218,11 @@ function showLogo() {
   img.addEventListener('error', () => console.warn(`LOGO_IMAGE in settings.md: couldn't load "${file}". Check the file is in the images folder and the name matches.`));
   logo.replaceChildren(img);
   logo.hidden = false;
-  logo.classList.toggle('black', setting('LOGO_BLACK', false));
+  // LOGO_TEXT_COLOR / LOGO_BLACK: the logo in one solid color (the filter is in index.html)
+  const tint = setting('LOGO_TEXT_COLOR', false) ? getComputedStyle(document.querySelector('.top-bar')).color
+    : setting('LOGO_BLACK', false) ? '#000' : '';
+  if (tint) document.querySelector('.logo-tint-color').setAttribute('flood-color', tint);
+  logo.classList.toggle('tinted', !!tint);
   // Room either side of the title for the logo, so the title stays in the middle
   new ResizeObserver(() => {
     root.style.setProperty('--logo-space', img.offsetWidth ? img.offsetWidth + 16 + 'px' : '0px');
@@ -225,22 +232,11 @@ function showLogo() {
 // The text sections: each one's words come from the file named in its
 // data-md (the text folder), through markdownToHtml (markdown.js). In the
 // title's file, a # heading on the first line is the page's big title.
-function loadContent(settingsReady) {
-  const sectionName = (n) => String(n).replace(/^.*\//, '').replace(/\.md$/i, '').toLowerCase();
-  return Promise.all([...document.querySelectorAll('[data-md]')].map((section) =>
+function loadContent(sections) {
+  return Promise.all(sections.map((section) =>
     fetch(section.dataset.md, { cache: 'no-cache' })
       .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))))
-      .then((md) => settingsReady.then(() => md))   // BOXED_TEXT is a setting
       .then((md) => {
-        // BOXED_TEXT: each part of the file between two or more empty lines
-        // is its own rounded box
-        if (setting('BOXED_TEXT', []).map(sectionName).includes(sectionName(section.dataset.md))) {
-          section.classList.add('boxed');
-          section.innerHTML = md.replace(/\r\n?/g, '\n').split(/\n[ \t]*\n[ \t]*\n\s*/)
-            .filter((part) => part.trim())
-            .map((part) => '<div class="text-box">' + markdownToHtml(part) + '</div>').join('\n');
-          return;
-        }
         let title = '';
         if (section.classList.contains('title-block')) {
           // The title is the first line (starting with #) and every line
@@ -261,19 +257,39 @@ function loadContent(settingsReady) {
       .catch((err) => console.warn(section.dataset.md + ' could not be loaded (' + err.message + ').'))));
 }
 
-// BOXED_TEXT boxes slide in from the side they're on as they scroll into view
+// QUOTES: a rounded box for each student's quote (a file in text/quotes),
+// in the left or right column or in the middle under both
+function placeQuotes() {
+  const quotes = setting('QUOTES', {});
+  const made = [];
+  for (const [side, spot] of [['left', '.quote-col[data-side="left"]'], ['right', '.quote-col[data-side="right"]'], ['middle', '.quote-middle']]) {
+    const names = Array.isArray(quotes[side]) ? quotes[side] : [];
+    for (const name of names) {
+      const file = String(name).trim().replace(/^.*\//, '').replace(/\.md$/i, '');
+      if (!file) continue;
+      const box = document.createElement('div');
+      box.className = 'content text-box';
+      box.dataset.md = 'text/quotes/' + file + '.md';
+      box.dataset.side = side;
+      document.querySelector(spot).appendChild(box);
+      made.push(box);
+    }
+  }
+  return made;
+}
+
+// The quote boxes slide in as they scroll into view: the left column's from
+// the left, the right column's from the right, the middle ones up from below
 function slideInBoxes() {
   root.style.setProperty('--box-slide-ms', Math.max(0, setting('BOX_ANIMATION_MS', 700)) + 'ms');
-  const boxes = [...document.querySelectorAll('.boxed .text-box')];
+  const boxes = [...document.querySelectorAll('.quotes .text-box')];
   if (!boxes.length || !setting('BOX_ANIMATION', true)) return;
 
+  const phone = matchMedia('(max-width: 900px)').matches;   // one column: they take turns
   boxes.forEach((box, i) => {
-    // Left of the middle of the screen comes in from the left, right from
-    // the right; on a phone (one column) they take turns
-    const r = box.getBoundingClientRect();
-    const mid = r.left + r.width / 2;
-    const side = Math.abs(mid - innerWidth / 2) < 40 ? (i % 2 ? 1 : -1) : (mid < innerWidth / 2 ? -1 : 1);
+    const side = phone ? (i % 2 ? 1 : -1) : { left: -1, right: 1 }[box.dataset.side] || 0;
     box.style.setProperty('--slide', side);
+    box.style.setProperty('--rise', side ? 0 : 1);
     box.classList.add('waiting');
   });
   const watch = new IntersectionObserver((entries) => {
@@ -291,15 +307,20 @@ function slideInBoxes() {
 }
 
 const settingsReady = loadSettings();
-const contentReady = loadContent(settingsReady);
+const pageText = loadContent([...document.querySelectorAll('[data-md]')]);
 
-settingsReady.then(() => {
+// The quotes are placed from the settings, then filled in like the other text
+const quotesText = settingsReady.then(() => {
+  const quotes = placeQuotes();
   loadFonts();
   applySettings();
   showDonateForm();
   showLogo();
+  return loadContent(quotes);
 });
+const contentReady = Promise.all([pageText, quotesText]);
 
-// The route map needs both the page text (for where !map! is) and the settings
-Promise.all([contentReady, settingsReady]).then(buildRouteMaps);
+// The route map needs the settings and the page text (for where !map! is),
+// but not the quotes
+Promise.all([pageText, settingsReady]).then(buildRouteMaps);
 Promise.all([contentReady, settingsReady]).then(slideInBoxes);

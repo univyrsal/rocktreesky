@@ -49,6 +49,8 @@ body {
 /* The bar across the top of the screen, with the title in the middle and
    the logo at the left (settings.md: TITLE_BAR_COLOR, LOGO_IMAGE) */
 .top-bar {
+  margin: var(--title-bar-margin, 0px);        /* settings.md: TITLE_BAR_MARGIN */
+  border-radius: var(--title-bar-radius, 0px); /* settings.md: TITLE_BAR_RADIUS */
   background: var(--title-bar-color, transparent);
   color: var(--title-bar-text, inherit);
   --muted: color-mix(in srgb, currentColor 75%, transparent);
@@ -75,8 +77,9 @@ body {
   line-height: 0;
 }
 
-/* LOGO_BLACK: the logo solid black (the filter is in index.html) */
-.logo.black img { filter: url(#logo-black); }
+/* LOGO_TEXT_COLOR / LOGO_BLACK: the logo in one solid color (the filter is
+   in index.html) */
+.logo.tinted img { filter: url(#logo-tint); }
 
 .logo img {
   display: block;
@@ -102,8 +105,8 @@ body {
   border-image: conic-gradient(var(--section-color) 0 0) fill 0 // 0 100vw;
 }
 
-/* BOXED_TEXT: a text section as rounded boxes (settings.md: BOX_COLOR),
-   each sliding in from its side when it scrolls into view */
+/* QUOTES: each student's quote in a rounded box (settings.md: BOX_COLOR),
+   sliding in from its side when it scrolls into view */
 .text-box {
   margin-bottom: var(--box-gap);
   padding: 28px 32px;
@@ -114,10 +117,21 @@ body {
 
 /* A box still waiting to slide in is cut off at the edge of the screen,
    so the page never scrolls sideways */
-.boxed {
+.quote-col,
+.quote-middle {
   overflow-x: clip;
   overflow-clip-margin: var(--side-space);
 }
+
+/* The middle quotes: under both columns, one column wide, centered */
+.quote-middle {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc((100% - var(--column-gap)) / 2);
+  margin-top: var(--box-gap);
+}
+
+.quote-middle:empty { display: none; }
 
 .text-box:last-child { margin-bottom: 0; }
 .text-box > :first-child { margin-top: 0; }
@@ -125,10 +139,10 @@ body {
 
 .text-box.waiting {
   opacity: 0;
-  transform: translateX(calc(var(--slide, -1) * 80px));
+  transform: translate(calc(var(--slide, -1) * 80px), calc(var(--rise, 0) * 60px));
 }
 
-/* MAP_CARD: the route map in a box like the BOXED_TEXT ones */
+/* MAP_CARD: the route map in a box like the quotes */
 .map-card {
   padding: 28px 32px;
   border-radius: 20px;
@@ -154,6 +168,9 @@ body {
 
 /* The map in its own section lines up with the top of the text beside it */
 .map-col .route-map { margin: 0; }
+
+/* Until its pictures have loaded (map.js) */
+.route-map.rm-loading { opacity: 0; transition: none; }
 
 /* So a {banner} picture knows how wide its section is */
 .row > * { container-type: inline-size; }
@@ -342,6 +359,7 @@ h1 {
    with a smallest and largest size so they stay readable. */
 .route-map {
   position: relative;
+  transition: opacity .4s;
   margin: 1.2em 0 1.6em;
   container-type: inline-size;
   line-height: 1.25;
@@ -554,7 +572,11 @@ h1 {
   .page { padding: 40px 16px 64px; }
   .top-bar-inner { padding: 24px 16px; }
   .logo { left: 16px; }
-  .boxed { overflow-clip-margin: 16px; }
+  .top-bar { margin: min(var(--title-bar-margin, 0px), 8px); }
+  .quote-col,
+  .quote-middle { overflow-clip-margin: 16px; }
+  .quotes { row-gap: var(--box-gap); }
+  .quote-middle { width: 100%; margin-top: 0; }
   .logo img { height: min(var(--logo-height), 44px); }
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }

@@ -41,6 +41,13 @@ TITLE_BAR_COLOR = "#91BD7D"
 TITLE_BAR_TEXT_COLOR = ""
 ```
 
+How rounded the bar's corners are, and the space between the bar and the edges of the screen, in pixels (phones use at most 8). `0` and `0` = square, running edge to edge.
+
+```js
+TITLE_BAR_RADIUS = 20
+TITLE_BAR_MARGIN = 16
+```
+
 The logo at the left of the bar, from the `images` folder (`.avif`, `.png`, `.jpg`, `.svg` and `.webp` all work). `""` = no logo. Clicking it goes to `LOGO_LINK` (`""` = not clickable). `LOGO_HEIGHT` is how tall it is in pixels (on phones at most 44). The words describe it for people who can't see it, so say where it goes.
 
 ```js
@@ -50,11 +57,11 @@ LOGO_HEIGHT = 72
 LOGO_WORDS = "Rock Tree Sky home page"
 ```
 
-- `true` = the logo is shown all black.
-- `false` = its own colors.
+The logo's color. `LOGO_TEXT_COLOR = true` makes it the same color as the title's words. Otherwise `LOGO_BLACK = true` makes it black. With both `false` it keeps its own colors.
 
 ```js
-LOGO_BLACK = true
+LOGO_TEXT_COLOR = true
+LOGO_BLACK = false
 ```
 
 ## Fonts
@@ -94,7 +101,7 @@ FALLBACK_FONT = "Nunito"
 
 ## The page layout
 
-From top to bottom: the title, centered; the route map, text and the donation form side by side; then the student quotes, in two columns. On a mid-size screen the top row's text goes under the map. On narrow screens (phones, small tablets) everything stacks, left one first.
+From top to bottom: the title, centered; the route map, text and the donation form side by side; then the student quotes, in two columns with one more centered under them. On a mid-size screen the top row's text goes under the map. On narrow screens (phones, small tablets) everything stacks, left one first.
 
 How far the page's contents stay from the left and right edges of the screen, in pixels (phones always use 16).
 
@@ -165,7 +172,7 @@ ZEFFY_FORM_LINK = ""
 The words in the box while `ZEFFY_FORM_LINK` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
 
 ```js
-FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc)"
+FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc) once I have the bank and routing number."
 ```
 
 How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
@@ -177,7 +184,7 @@ FORM_WIDTH = 480
 
 ## Page text and pictures
 
-Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md` (between the map and the form), and `bottom-left.md` and `bottom-right.md` (the student quotes). Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
+Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md` (between the map and the form), and one file per student quote in `text/quotes` (see `QUOTES` below). Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
 
 How to write it:
 
@@ -197,20 +204,29 @@ TEXT_SIZE = 17
 TITLE_SIZE = 56
 ```
 
-Text sections to center, by file name, like `["beside-form.md", "bottom-left.md"]`. `[]` centers none. (The title is always centered. To center just part of a section, use `->` and `<-` as above.)
+Text sections to center, by file name, like `["beside-form.md", "kai-b.md"]`. `[]` centers none. (The title is always centered. To center just part of a section, use `->` and `<-` as above.)
 
 ```js
 CENTERED_TEXT = []
 ```
 
-Text sections shown as rounded boxes, by file name. Leave two or more empty lines in the file where one box ends and the next begins. `BOX_COLOR` is their color (`"accent"` uses `ACCENT_COLOR`).
+The student quotes. Each one is its own file in `text/quotes`, shown in its own rounded box. List each file name under where it goes: the `left` or `right` column (top to bottom), or the `middle`, centered under both columns. A new quote is a new file in `text/quotes` plus its name here.
 
 ```js
-BOXED_TEXT = ["bottom-left.md", "bottom-right.md"]
+QUOTES = {
+  left:   ["avani-cheung.md", "memphis-snyder.md"],
+  right:  ["veda-kokatay.md", "amir-yaesh.md"],
+  middle: ["kai-b.md"],
+}
+```
+
+The color of the quote boxes and other rounded boxes (`"accent"` uses `ACCENT_COLOR`).
+
+```js
 BOX_COLOR = "#EDEBD5"
 ```
 
-- `true` = each box slides in from its side when it scrolls into view, taking `BOX_ANIMATION_MS` (1000 = 1 second).
+- `true` = each quote slides in from its side (the middle ones up from below) when it scrolls into view, taking `BOX_ANIMATION_MS` (1000 = 1 second).
 - `false` = the boxes are just there.
 
 ```js

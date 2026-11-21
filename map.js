@@ -10,6 +10,14 @@ const MAP_MASK = 'images/California-Satellite-Map-mask.png';
 const MAP_W = 2114;
 const MAP_H = 2030;
 
+// The map's two pictures, loaded and decoded before the map shows or starts
+// drawing (index.html already started downloading them)
+const mapPicturesReady = Promise.all([MAP_IMAGE, MAP_MASK].map((src) => {
+  const img = new Image();
+  img.src = src;
+  return img.decode().catch(() => console.warn(`The route map couldn't load "${src}".`));
+}));
+
 let routeMapCount = 0;
 
 function buildRouteMaps() {
@@ -156,6 +164,16 @@ function buildRouteMap(slot) {
     figure.classList.toggle('rm-detail-shown', progress >= 1);
   }
 
+  // Hidden until its pictures are ready, then it fades in, and only then
+  // can the line start drawing
+  figure.classList.add('rm-loading');
+  const shown = mapPicturesReady.then(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      figure.classList.remove('rm-loading');
+      resolve();
+    }));
+  }));
+
   if (!setting('ROUTE_ANIMATION', true)) {
     drawTo(1);
   } else {
@@ -175,7 +193,7 @@ function buildRouteMap(slot) {
     const seen = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) { seen.disconnect(); play(); }
     }, { threshold: 0.4 });
-    seen.observe(figure.querySelector('.rm-stage'));
+    shown.then(() => seen.observe(figure.querySelector('.rm-stage')));
   }
 
   if (setting('MAP_EDIT_MODE', false)) startMapEditMode(figure, detail);
