@@ -17,7 +17,7 @@ Sizes are in screen pixels at normal zoom. 96 pixels is about 1 inch.
 The accent color is used for the numbered-step circles in the page text.
 
 ```js
-ACCENT_COLOR = "#6BC04B"
+ACCENT_COLOR = "#91BD7D"
 ```
 
 The page's background color, behind the info.
@@ -130,7 +130,7 @@ Each row's color and title. The rows are `top` (the map, text and form), `middle
 SECTIONS = {
   top:    { color: "", title: "" },
   middle: { color: "", title: "" },
-  bottom: { color: "accent", title: "" },
+  bottom: { color: "#EDEBD5", title: "Hear Straight From Students" },
 }
 ```
 
@@ -162,10 +162,16 @@ The Zeffy donation form. In Zeffy, open the campaign's Share options and copy it
 ZEFFY_FORM_LINK = ""
 ```
 
+The words in the box while `ZEFFY_FORM_LINK` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
+
+```js
+FORM_PLACEHOLDER = "Zeffy donation form goes here"
+```
+
 How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
 
 ```js
-FORM_HEIGHT = 720
+FORM_HEIGHT = 700
 FORM_WIDTH = 480
 ```
 

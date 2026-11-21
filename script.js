@@ -148,7 +148,12 @@ function showSections() {
 // normal link or its embed link, and shows the embed version.
 function showDonateForm() {
   const link = setting('ZEFFY_FORM_LINK', '').trim();
-  if (!link) return;
+  if (!link) {
+    // FORM_PLACEHOLDER: the words in the box until there's a form
+    const words = setting('FORM_PLACEHOLDER', 'Zeffy donation form goes here');
+    document.querySelectorAll('.form-placeholder').forEach((box) => { box.textContent = words; });
+    return;
+  }
   let url = null;
   try { url = new URL(link); } catch (err) { /* not a link */ }
   if (!url || url.protocol !== 'https:' || !/(^|.)zeffy.com$/i.test(url.hostname)) {
