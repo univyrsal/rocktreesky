@@ -91,6 +91,25 @@ body {
 
 .row:last-child { margin-bottom: 0; }
 
+/* SECTIONS: a row with a color. The color runs out to the edges of the
+   screen (the border-image is painted outside the row without making it
+   any wider), with SECTION_PADDING above and below the row's contents. */
+.row.colored {
+  padding-block: var(--section-padding);
+  border-image: conic-gradient(var(--section-color) 0 0) fill 0 // 0 100vw;
+}
+
+/* A colored last row runs down to the bottom of the page */
+.page:has(> .row.colored:last-child) { padding-bottom: 0; }
+
+/* SECTIONS: a row's title, centered across the whole row */
+.section-title {
+  grid-column: 1 / -1;
+  margin: 0 0 32px;
+  font: var(--heading-weight) min(var(--section-title-size), 7vw) / 1.2 var(--heading-font);
+  text-align: center;
+}
+
 /* The top row: the map takes what the text and the form leave */
 .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, var(--form-width)); }
 
@@ -489,6 +508,7 @@ h1 {
 @media (max-width: 1500px) {
   .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--form-width)); row-gap: 40px; }
   .row-top .donate { grid-column: 2; grid-row: 1 / span 2; }
+  .row-top.has-title .donate { grid-row: 2 / span 2; }
 }
 
 /* Narrow screens: no room for side by side, so each row stacks, left
@@ -500,5 +520,7 @@ h1 {
   .logo img { height: min(var(--logo-height), 44px); }
   .row,
   .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
-  .row-top .donate { grid-column: auto; grid-row: auto; }
+  .row-top .donate,
+  .row-top.has-title .donate { grid-column: auto; grid-row: auto; }
+  .section-title { margin-bottom: 0; }
 }

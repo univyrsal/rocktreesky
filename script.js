@@ -109,6 +109,9 @@ function applySettings() {
   root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
   root.style.setProperty('--column-gap', Math.max(0, setting('COLUMN_GAP', 64)) + 'px');
   root.style.setProperty('--picture-gap', Math.max(0, setting('PICTURE_GAP', 64)) + 'px');
+  root.style.setProperty('--section-padding', Math.max(0, setting('SECTION_PADDING', 64)) + 'px');
+  root.style.setProperty('--section-title-size', Math.max(12, setting('SECTION_TITLE_SIZE', 36)) + 'px');
+  showSections();
 
   root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
   // 0 = as tall as the picture works out; any other number sets the height.
@@ -119,6 +122,26 @@ function applySettings() {
   // {banner} pictures: 0 = their own shape; any other number crops them to that height
   const bannerHeight = Math.max(0, setting('BANNER_HEIGHT', 0));
   root.style.setProperty('--banner-height', bannerHeight > 0 ? bannerHeight + 'px' : 'auto');
+}
+
+// SECTIONS: each row's color ("accent" = ACCENT_COLOR) and title
+function showSections() {
+  const sections = setting('SECTIONS', {});
+  document.querySelectorAll('.row[data-section]').forEach((row) => {
+    const { color = '', title = '' } = sections[row.dataset.section] || {};
+    const c = String(color).trim();
+    row.classList.toggle('colored', !!c);
+    row.style.setProperty('--section-color', c.toLowerCase() === 'accent' ? 'var(--accent)' : c);
+    row.querySelector(':scope > .section-title')?.remove();
+    const t = String(title).trim();
+    row.classList.toggle('has-title', !!t);
+    if (t) {
+      const h = document.createElement('h2');
+      h.className = 'section-title';
+      h.textContent = t;
+      row.prepend(h);
+    }
+  });
 }
 
 // The Zeffy donation form (settings.md: ZEFFY_FORM_LINK). Takes the form's

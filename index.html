@@ -25,8 +25,10 @@
 
   <main class="page">
 
+    <!-- Each row's color and title: SECTIONS in settings.md -->
+
     <!-- 1. The route map (map.js) | text | the donation form -->
-    <section class="row row-top">
+    <section class="row row-top" data-section="top">
       <div class="map-col"><div class="route-map-slot"></div></div>
       <div class="content" data-md="text/beside-form.md"></div>
       <!-- Zeffy donation form: script.js puts it here from ZEFFY_FORM_LINK in settings.md -->
@@ -36,7 +38,7 @@
     </section>
 
     <!-- 2. Text | a picture (SIDE_PICTURE in settings.md) -->
-    <section class="row row-picture">
+    <section class="row row-picture" data-section="middle">
       <div class="content" data-md="text/beside-picture.md"></div>
       <div class="side-picture">
         <div class="picture-placeholder">Picture goes here<br>(put its file name in SIDE_PICTURE in settings.md)</div>
@@ -44,7 +46,7 @@
     </section>
 
     <!-- 3. Text | text -->
-    <section class="row">
+    <section class="row" data-section="bottom">
       <div class="content" data-md="text/bottom-left.md"></div>
       <div class="content" data-md="text/bottom-right.md"></div>
     </section>

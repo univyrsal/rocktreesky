@@ -121,6 +121,26 @@ ROW_GAP = 96
 COLUMN_GAP = 64
 ```
 
+Each row's color and title. The rows are `top` (the map, text and form), `middle` (text and the picture) and `bottom` (the two texts).
+
+- `color`: fills the row's background out to the edges of the screen. `"accent"` uses `ACCENT_COLOR`. `""` = no color.
+- `title`: a heading centered across the top of the row. `""` = none.
+
+```js
+SECTIONS = {
+  top:    { color: "", title: "" },
+  middle: { color: "", title: "" },
+  bottom: { color: "accent", title: "" },
+}
+```
+
+The space above and below the contents of a colored row, and how big row titles are, in pixels (titles shrink on phones so they fit).
+
+```js
+SECTION_PADDING = 64
+SECTION_TITLE_SIZE = 36
+```
+
 The space between the picture and the text beside it (instead of `COLUMN_GAP`).
 
 ```js
