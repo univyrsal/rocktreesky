@@ -262,7 +262,7 @@ MAP_DETAIL = {
   area: [[520, 883], [687, 1115]],
   at: [1135, 35],
   width: 564,
-  title: "Bay Area detail",
+  title: "",
 }
 ```
 
