@@ -44,6 +44,12 @@ BODY_FONT = "Gotham Rounded"
 BODY_WEIGHT = 700
 ```
 
+How heavy `**bold**` words in the text are. It needs to be heavier than `BODY_WEIGHT` to stand out: with the text at 700, use `900` (black). A font from a file needs that weight's file in `FONT_FILES` too.
+
+```js
+BOLD_WEIGHT = 900
+```
+
 Where fonts come from:
 
 - Any font on [Google Fonts](https://fonts.google.com) works just by typing its name above.

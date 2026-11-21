@@ -20,6 +20,7 @@
   --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
   --body-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;     /* settings.md: BODY_FONT */
   --body-weight: 700;                                                 /* settings.md: BODY_WEIGHT */
+  --bold-weight: 900;                                                 /* settings.md: BOLD_WEIGHT */
 }
 
 * { box-sizing: border-box; }
@@ -136,6 +137,9 @@ h1 {
 .content > :last-child { margin-bottom: 0; }
 
 .content p { margin: 0 0 1em; }
+
+/* **bold** in the text (settings.md: BOLD_WEIGHT) */
+.content strong { font-weight: var(--bold-weight); }
 
 .content h3 {
   margin: 1.6em 0 0.5em;

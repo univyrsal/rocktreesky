@@ -29,6 +29,7 @@ function loadFonts() {
   const fallback = setting('FALLBACK_FONT', 'Nunito');
   const heading = { family: setting('HEADING_FONT', 'Gotham Rounded'), weight: setting('HEADING_WEIGHT', 700) };
   const body = { family: setting('BODY_FONT', 'Gotham Rounded'), weight: setting('BODY_WEIGHT', 700) };
+  const bold = setting('BOLD_WEIGHT', 900);
   const files = setting('FONT_FILES', []).filter((f) => f && f.family && f.file);
   const fromFile = new Set(files.map((f) => f.family));
 
@@ -46,7 +47,8 @@ function loadFonts() {
   // One request per Google family, so a name Google doesn't have can't
   // take the others down with it
   const google = new Map();
-  for (const want of [heading, body, { family: fallback, weight: heading.weight }, { family: fallback, weight: body.weight }]) {
+  for (const want of [heading, body, { family: body.family, weight: bold },
+    { family: fallback, weight: heading.weight }, { family: fallback, weight: body.weight }, { family: fallback, weight: bold }]) {
     if (!want.family || fromFile.has(want.family)) continue;
     if (!google.has(want.family)) google.set(want.family, new Set());
     google.get(want.family).add(want.weight);
@@ -63,6 +65,7 @@ function loadFonts() {
   root.style.setProperty('--heading-weight', heading.weight);
   root.style.setProperty('--body-font', stack(body.family));
   root.style.setProperty('--body-weight', body.weight);
+  root.style.setProperty('--bold-weight', bold);
 
   // Say so in the console if a font didn't turn up, rather than quietly
   // showing the fallback
