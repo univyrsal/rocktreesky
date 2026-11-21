@@ -54,7 +54,7 @@ LOGO_WORDS = "Rock Tree Sky home page"
 - `false` = its own colors.
 
 ```js
-LOGO_BLACK = false
+LOGO_BLACK = true
 ```
 
 ## Fonts

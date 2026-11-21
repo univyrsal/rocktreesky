@@ -75,8 +75,8 @@ body {
   line-height: 0;
 }
 
-/* LOGO_BLACK: every colored part of the logo turned black */
-.logo.black img { filter: brightness(0); }
+/* LOGO_BLACK: the logo solid black (the filter is in index.html) */
+.logo.black img { filter: url(#logo-black); }
 
 .logo img {
   display: block;
@@ -148,6 +148,9 @@ body {
 
 /* The top row: the map takes what the text and the form leave */
 .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, var(--form-width)); }
+
+/* The text between them sits halfway down the row */
+.row-top > .content { align-self: center; }
 
 /* The map in its own section lines up with the top of the text beside it */
 .map-col .route-map { margin: 0; }

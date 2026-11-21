@@ -13,6 +13,14 @@
 <body>
   <!-- Each text section's words come from its own file in the text folder
        (named in data-md); what's written here only shows if it can't load. -->
+  <!-- LOGO_BLACK: turns every color in the logo black and makes see-through
+       parts solid (the alpha line doubles how opaque each pixel is) -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <filter id="logo-black" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 2 0"/>
+    </filter>
+  </svg>
+
   <!-- The bar across the top: the logo (LOGO_IMAGE in settings.md) and the title -->
   <header class="top-bar">
     <div class="top-bar-inner">
