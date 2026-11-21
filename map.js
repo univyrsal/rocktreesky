@@ -68,14 +68,22 @@ function buildRouteMap(slot) {
   let detailSvg = '';
   if (detail) {
     const { area } = detail;
+    // The box appears once the whole route is drawn, growing out of the
+    // area it zooms in on: --from shrinks it back down onto that area
+    const s = 1 / detail.zoom;
+    const from = `translate(${area.x - detail.x * s}px, ${area.y - detail.y * s}px) scale(${s})`;
     detailSvg = `
-      <rect class="rm-area" x="${area.x}" y="${area.y}" width="${area.w}" height="${area.h}"/>
-      <line class="rm-link" x1="${area.x + area.w}" y1="${area.y}" x2="${detail.x}" y2="${detail.y}"/>
-      <line class="rm-link" x1="${area.x + area.w}" y1="${area.y + area.h}" x2="${detail.x}" y2="${detail.y + detail.h}"/>
-      <svg class="rm-zoomed" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}">
-        <use href="#${id}-base"/>${routeLines}
-      </svg>
-      <rect class="rm-frame" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}"/>`;
+      <g class="rm-detail">
+        <rect class="rm-area" x="${area.x}" y="${area.y}" width="${area.w}" height="${area.h}"/>
+        <line class="rm-link" x1="${area.x + area.w}" y1="${area.y}" x2="${detail.x}" y2="${detail.y}"/>
+        <line class="rm-link" x1="${area.x + area.w}" y1="${area.y + area.h}" x2="${detail.x}" y2="${detail.y + detail.h}"/>
+        <g class="rm-box" style="--from: ${from}">
+          <svg class="rm-zoomed" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}" viewBox="${area.x} ${area.y} ${area.w} ${area.h}">
+            <use href="#${id}-base"/>${routeLines}
+          </svg>
+          <rect class="rm-frame" x="${detail.x}" y="${detail.y}" width="${detail.w}" height="${detail.h}"/>
+        </g>
+      </g>`;
   }
 
   // Stops: a numbered marker with its name. One inside the detail area gets
@@ -85,7 +93,7 @@ function buildRouteMap(slot) {
       <span class="rm-dot">${stop.start ? '' : stop.number}</span>${cls === 'rm-small' ? '' : `<span class="rm-label">${esc(stop.name)}</span>`}
     </div>`;
   const marks = stops.map((stop) => (inArea(stop)
-    ? marker(stop, stop, 'rm-small') + marker(stop, toBox(stop), '')
+    ? marker(stop, stop, 'rm-small') + marker(stop, toBox(stop), 'rm-in-box')
     : marker(stop, stop, ''))).join('');
 
   const title = setting('ROUTE_TITLE', '');
@@ -145,6 +153,7 @@ function buildRouteMap(slot) {
   function drawTo(progress) {
     lines.forEach((el) => { el.style.strokeDashoffset = total * (1 - progress); });
     stopEls.forEach((el) => el.classList.toggle('shown', progress >= Number(el.dataset.reached) - 0.0001));
+    figure.classList.toggle('rm-detail-shown', progress >= 1);
   }
 
   if (!setting('ROUTE_ANIMATION', true)) {

@@ -401,6 +401,26 @@ h1 {
 .rm-link { stroke: #fff; stroke-width: 1.5; }
 .rm-frame { fill: none; stroke: #1b1d1d; stroke-width: 5; }
 
+/* The detail box waits until the route is drawn, then grows out of its
+   area; the lines joining them and the stops in it follow once it's there */
+.rm-detail > *,
+.rm-detail-title {
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.rm-box {
+  transform: var(--from);
+  transform-origin: 0 0;
+  transition: opacity .2s, transform .7s cubic-bezier(.2, .8, .2, 1);
+}
+
+.rm-detail-shown .rm-detail > *,
+.rm-detail-shown .rm-detail-title { opacity: 1; }
+.rm-detail-shown .rm-box { transform: none; }
+.rm-detail-shown .rm-link,
+.rm-detail-shown .rm-detail-title { transition-delay: .6s; }
+
 .rm-detail-title {
   position: absolute;
   margin: 0;
@@ -422,6 +442,9 @@ h1 {
 }
 
 .rm-stop.shown { opacity: 1; transform: none; }
+
+.route-map:not(.rm-detail-shown) .rm-stop.rm-in-box { opacity: 0; transform: scale(.4); }
+.rm-detail-shown .rm-stop.rm-in-box { transition-delay: .65s; }
 
 .rm-dot {
   display: inline-flex;
