@@ -167,7 +167,7 @@ The Givebutter widgets. Each widget's embed code (in Givebutter: the campaign â†
 - `GIVEBUTTER_ACCOUNT`: the `acct=` part of the `<script>` line (your Givebutter account, the same for every widget).
 - The widget's ID, from the `<givebutter-widget id="...">` line. You can paste that whole line between the quotes instead.
 
-`GIVEBUTTER_FORM` is the donation form, and `GIVEBUTTER_THERMOMETER` is the thermometer (a Goal Bar widget set to Thermometer), shown to the right of the form. `""` leaves either out; with neither, a placeholder box shows instead.
+`GIVEBUTTER_FORM` is the donation form, and `GIVEBUTTER_THERMOMETER` is the thermometer (a Goal Bar widget set to Thermometer), shown to the right of the form. On phones it's swapped for a progress bar above the form, with the same colors and settings as the thermometer. `""` leaves either out; with neither, a placeholder box shows instead.
 
 ```js
 GIVEBUTTER_ACCOUNT = "ntw9fFA5tDQHtDt7"
@@ -184,7 +184,7 @@ FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details 
 A small note that pops up when someone presses Continue in the donation form, to the left of the form, pointing at it (above the form on phones). It never covers the form, and it has an Ã— to close it. `**bold**` works. `""` = no note.
 
 ```js
-TIP_NOTE = 'You have the option to pay 0% in transaction fees. To do that click "15%" then "other" then set the tip amount to $0.00'
+TIP_NOTE = 'You have the option to tip Givebutter $0. To do that click "15%" then "other" then set the tip amount to $0.00'
 ```
 
 How far down from the top of the form the note sits, in pixels (where it lines up with the tip box).

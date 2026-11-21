@@ -204,6 +204,30 @@ function showDonateForm() {
     }));
     spot.classList.add('has-widget');
   });
+
+  // On phones (style.css hides one or the other) the thermometer is swapped
+  // for a progress bar above the form: the same goal bar with the same
+  // look, set in Givebutter, but type progress-bar and its standard size
+  const thermometer = widgetId('GIVEBUTTER_THERMOMETER');
+  if (!thermometer) return;
+  fetch(`https://givebutter.com/elements/api/v2/${encodeURIComponent(account)}/elements/${encodeURIComponent(thermometer)}`)
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
+    .then(({ config = {} }) => {
+      if (!config.campaign) return;
+      document.querySelectorAll('.donate.has-widget').forEach((spot) => {
+        const bar = document.createElement('givebutter-goal-bar');
+        bar.className = 'gb-progress';
+        // Givebutter's settings are camelCase (progressBarColor); the tag's
+        // attributes are kebab-case (progress-bar-color)
+        for (const [key, value] of Object.entries(config)) {
+          if (key === 'size' || key === 'type' || value == null || typeof value === 'object') continue;
+          bar.setAttribute(key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase()), String(value));
+        }
+        bar.setAttribute('type', 'progress-bar');
+        spot.appendChild(bar);
+      });
+    })
+    .catch((err) => console.warn('Couldn\'t get the Givebutter thermometer\'s settings for the phone progress bar (' + err.message + ').'));
 }
 
 // LOGO_IMAGE: the logo at the left of the title bar, a link to LOGO_LINK

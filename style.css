@@ -206,6 +206,7 @@ body {
 }
 .donate .gb-form { display: block; flex: 1; min-width: 0; }
 .donate .gb-thermometer { display: block; flex: none; }   /* to the right of the form */
+.donate .gb-progress { display: none; }                  /* phones only, instead of the thermometer */
 
 /* TIP_NOTE: pops up to the left of the form when Continue is pressed,
    pointing at it, so it never covers the form */
@@ -651,6 +652,9 @@ h1 {
   /* No room for the thermometer beside the form: it goes under it */
   .donate.has-widget { flex-direction: column; align-items: center; }
   .donate .gb-form { flex: none; width: 100%; }
+  /* Phones: a progress bar above the form instead of the thermometer */
+  .donate .gb-thermometer { display: none; }
+  .donate .gb-progress { display: block; order: -1; width: 100%; }
   /* The tip note goes above the form, pointing down at it */
   .tip-note { position: relative; top: auto; right: auto; width: 100%; margin-bottom: 4px; transform: translateY(-8px); }
   .tip-note::after { top: auto; bottom: -9px; right: auto; left: 50%; margin-left: -7px; transform: rotate(135deg); }
