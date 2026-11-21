@@ -23,7 +23,7 @@ ACCENT_COLOR = "#6BC04B"
 The background of the rounded cards the donation forms sit in.
 
 ```js
-CARD_COLOR = "#CCCCCC"
+CARD_COLOR = "#91BD7D"
 ```
 
 The page's background color, behind the info.
@@ -78,7 +78,7 @@ DEFAULT_GOAL = 10000
 The line under the big dollar amount. `{goal}` is replaced with the goal amount (for example $10,000), so `"raised of {goal}"` shows "raised of $10,000". Leave `{goal}` out to show just your own words, or use `""` for no line at all.
 
 ```js
-RAISED_LABEL = "raised of {goal}"
+RAISED_LABEL = ""
 ```
 
 How far apart the dollar marks along the tube are. `2500` puts marks at $2,500, $5,000, $7,500 and $10,000. `0` hides them.
@@ -106,7 +106,7 @@ THERMOMETER_SHINE = false
 How wide the tube is. The bulb at the bottom grows with it.
 
 ```js
-THERMOMETER_WIDTH = 56
+THERMOMETER_WIDTH = 40
 ```
 
 Whether the thermometer fills up and the dollar amount counts up when the page opens (`true`), or both just appear already filled (`false`). The second setting is how long the fill takes, in milliseconds (1000 = 1 second).
@@ -170,13 +170,13 @@ ZEFFY_FORM_LINK = ""
 How tall the forms are, in pixels. A form longer than this scrolls inside itself. The thermometer beside the top form is the same height.
 
 ```js
-FORM_HEIGHT = 900
+FORM_HEIGHT = 720
 ```
 
 How wide the top card (the form and the thermometer) is, and how wide the bottom form's card is.
 
 ```js
-FORM_CARD_WIDTH = 700
+FORM_CARD_WIDTH = 600
 BOTTOM_FORM_WIDTH = 560
 ```
 
@@ -186,7 +186,7 @@ Each section of words on the page has its own file in the `text` folder, named f
 
 How to write it:
 
-- In `title.md`, the first line, starting with `# `, is the page's big title. A paragraph right under it is shown a little lighter, as a tagline.
+- In `title.md`, the first line, starting with `# `, is the page's big title. Every line right under it (up to an empty line) is another line of the title, so a long title can be split where you like. After an empty line, a paragraph is shown a little lighter, as a tagline.
 - Leave an empty line between paragraphs. Each extra empty line adds a line's worth of space.
 - `# Words` on its own line is a heading. `## Words` is a centered heading, and the lines right under it are centered too (good for a name with a photo).
 - `**bold**`, `*italic*`, `***both***`.
@@ -194,6 +194,19 @@ How to write it:
 - `- item` makes a bulleted list, `1. item` a numbered list, and `1) item` numbered steps, each number in an accent-colored circle.
 - `->` on its own line starts centering everything after it, `<-` on its own line stops. Or put `-> one line <-` on a line by itself.
 - A `\` in front of a character shows it as it is, for example `\*` for a real asterisk.
+
+How big the words are, in pixels: the text sections, and the big title at the top (it shrinks on phones so it fits).
+
+```js
+TEXT_SIZE = 17
+TITLE_SIZE = 56
+```
+
+Text sections to center, by file name, like `["beside-map.md", "bottom-left.md"]`. `[]` centers none. (The title is always centered. To center just part of a section, use `->` and `<-` as above.)
+
+```js
+CENTERED_TEXT = []
+```
 
 Pictures:
 

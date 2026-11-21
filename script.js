@@ -102,13 +102,21 @@ function applySettings() {
   thermometer.classList.toggle('flat', !setting('THERMOMETER_SHINE', true));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
-  root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
-  root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 900)) + 'px');
-  root.style.setProperty('--card-width', Math.max(300, setting('FORM_CARD_WIDTH', 700)) + 'px');
+  root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 40) + 'px');
+  root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
+  root.style.setProperty('--card-width', Math.max(300, setting('FORM_CARD_WIDTH', 600)) + 'px');
   root.style.setProperty('--bottom-form-width', Math.max(300, setting('BOTTOM_FORM_WIDTH', 560)) + 'px');
 
   // The page's layout
   root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1600)) + 'px');
+  root.style.setProperty('--text-size', Math.max(10, setting('TEXT_SIZE', 17)) + 'px');
+  root.style.setProperty('--title-size', Math.max(16, setting('TITLE_SIZE', 56)) + 'px');
+  // CENTERED_TEXT: text sections centered, by file name ("beside-map.md")
+  const sectionName = (n) => String(n).replace(/^.*\//, '').replace(/\.md$/i, '').toLowerCase();
+  const centered = setting('CENTERED_TEXT', []).map(sectionName);
+  document.querySelectorAll('[data-md]').forEach((el) => {
+    el.classList.toggle('centered-section', centered.includes(sectionName(el.dataset.md)));
+  });
   root.style.setProperty('--side-space', Math.max(0, setting('PAGE_SIDE_SPACE', 96)) + 'px');
   root.classList.toggle('no-scrollbar', setting('HIDE_SCROLLBAR', true));
   root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
@@ -178,9 +186,20 @@ function loadContent() {
       .then((md) => {
         let title = '';
         if (section.classList.contains('title-block')) {
-          md = md.replace(/^\s*#\s+(.+?)\s*#*\s*(\n|$)/, (all, words) => { title = words; return ''; });
+          // The title is the first line (starting with #) and every line
+          // right under it, up to the first empty line; each is its own
+          // line of the title. A # in front of the later lines is optional.
+          const lines = md.replace(/\r\n?/g, '\n').replace(/^\s*\n/, '').split('\n');
+          if (/^#\s+/.test(lines[0] || '')) {
+            let end = 0;
+            while (end < lines.length && lines[end].trim()) end++;
+            title = lines.slice(0, end)
+              .map((line) => markdownToHtml(line.replace(/^#*\s*/, '').replace(/\s*#*\s*$/, '')).replace(/^<p>|<\/p>\s*$/g, ''))
+              .filter(Boolean).join('<br>');
+            md = lines.slice(end).join('\n');
+          }
         }
-        section.innerHTML = (title ? '<h1>' + markdownToHtml(title).replace(/^<p>|<\/p>$/g, '') + '</h1>\n' : '') + markdownToHtml(md);
+        section.innerHTML = (title ? '<h1>' + title + '</h1>\n' : '') + markdownToHtml(md);
       })
       .catch((err) => console.warn(section.dataset.md + ' could not be loaded (' + err.message + ').'))));
 }
