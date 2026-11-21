@@ -5,9 +5,8 @@
   --muted: #5f6b66;
   --stone: #dcd6cc;
   --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
-  --card: #fcfbf5;                /* settings.md: CARD_COLOR */
-  --thermometer-width: 40px;      /* settings.md: THERMOMETER_WIDTH */
   --form-height: 720px;           /* settings.md: FORM_HEIGHT */
+  --form-width: 480px;            /* settings.md: FORM_WIDTH */
   --page-width: 1600px;           /* settings.md: PAGE_WIDTH */
   --side-space: 96px;             /* settings.md: PAGE_SIDE_SPACE */
   --text-size: 17px;              /* settings.md: TEXT_SIZE */
@@ -15,11 +14,6 @@
   --row-gap: 96px;                /* settings.md: ROW_GAP */
   --column-gap: 64px;             /* settings.md: COLUMN_GAP */
   --picture-gap: 64px;            /* settings.md: PICTURE_GAP */
-  --card-width: 600px;            /* settings.md: FORM_CARD_WIDTH */
-  --bottom-form-width: 560px;     /* settings.md: BOTTOM_FORM_WIDTH */
-  --fill-duration: 1600ms;        /* settings.md: FILL_ANIMATION_MS */
-  --bulb-size: calc(var(--thermometer-width) * 1.9);
-  --tube-border: 8px;
   --info-pad: 0px;                /* a {banner} runs this far past its section's sides */
   --heading-font: "Gotham Rounded", "Nunito", system-ui, sans-serif;  /* settings.md: HEADING_FONT */
   --heading-weight: 700;                                              /* settings.md: HEADING_WEIGHT */
@@ -39,7 +33,7 @@ body {
   line-height: 1.65;
 }
 
-/* The page: a centered column of rows, each with two sections side by side */
+/* The page: a centered column of rows of sections side by side */
 .page {
   max-width: calc(var(--page-width) + 2 * var(--side-space));
   margin: 0 auto;
@@ -63,8 +57,10 @@ body {
   margin-bottom: var(--row-gap);
 }
 
-/* Text beside the form card: the card keeps its own width */
-.row-form { grid-template-columns: minmax(0, 1fr) minmax(0, var(--card-width)); }
+.row:last-child { margin-bottom: 0; }
+
+/* The top row: the map, text, then the form, which keeps its own width */
+.row-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, var(--form-width)); }
 
 /* Text beside the picture has its own gap (settings.md: PICTURE_GAP) */
 .row-picture { column-gap: var(--picture-gap); }
@@ -74,27 +70,6 @@ body {
 
 /* So a {banner} picture knows how wide its section is */
 .row > * { container-type: inline-size; }
-
-/* A rounded card holding a donation form */
-.card {
-  padding: 24px;
-  border-radius: 20px;
-  background: var(--card);
-  --muted: var(--text);   /* grey is hard to read on a colored card */
-}
-
-/* The top card: the form, with the thermometer to its right */
-.form-card {
-  display: flex;
-  gap: 24px;
-}
-
-.form-card .donate { flex: 1; min-width: 0; }
-
-.bottom-form .card {
-  max-width: var(--bottom-form-width);
-  margin: 0 auto;
-}
 
 /* The picture beside the text (settings.md: SIDE_PICTURE) */
 .side-picture img {
@@ -113,142 +88,6 @@ body {
   border-radius: var(--picture-radius, 12px);
   color: var(--muted);
   text-align: center;
-}
-
-/* Thermometer column */
-.meter {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 0;
-  padding-left: 64px;   /* room for the scale labels */
-}
-
-.totals {
-  margin-bottom: 24px;
-  text-align: center;
-}
-
-.totals p { margin: 0; }
-
-.raised {
-  font: var(--heading-weight) 1.75rem/1.1 var(--heading-font);
-  font-variant-numeric: tabular-nums;
-}
-
-
-.donors {
-  margin-top: 2px !important;
-  color: var(--muted);
-  font-size: .9375rem;
-}
-
-/* Tall tube that fills upward, with the bulb at the bottom */
-.thermometer {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.tube {
-  flex: 1;
-  min-height: 0;
-  width: var(--thermometer-width);
-  margin-bottom: calc(var(--tube-border) * -2);
-  border-radius: 999px 999px 0 0;
-  background: var(--stone);
-  position: relative;
-}
-
-.track {
-  position: absolute;
-  inset: var(--tube-border) var(--tube-border) 0;
-}
-
-/* The tube's colors (settings.md: THERMOMETER_COLORS) run bottom to top over
-   the whole tube, and the fill uncovers them as it rises: the gradient is
-   sized to the full track (--track-height, set by script.js), not the fill. */
-.fill {
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 1;               /* above the bulb's grey ring, so the two join */
-  height: 0;
-  border-radius: 999px 999px 0 0;
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, .25) 45%, transparent),
-    linear-gradient(to top, var(--fill-colors, var(--accent), var(--accent))) bottom / 100% var(--track-height, 100%) no-repeat;
-  transition: height var(--fill-duration) cubic-bezier(.22, .8, .24, 1);
-}
-
-/* THERMOMETER_SHINE off: flat color, no highlight on the tube or bulb */
-.thermometer.flat .fill {
-  background: linear-gradient(to top, var(--fill-colors, var(--accent), var(--accent))) bottom / 100% var(--track-height, 100%) no-repeat;
-}
-
-.thermometer.flat .bulb-fill {
-  background: var(--bulb-color, var(--accent));
-}
-
-/* The grey of the bulb and the grey of the tube are one color, so they read
-   as one outline; the colored parts sit on top of both */
-.bulb {
-  flex: none;
-  position: relative;
-  width: var(--bulb-size);
-  height: var(--bulb-size);
-  padding: var(--tube-border);
-  border-radius: 50%;
-  background: var(--stone);
-}
-
-.bulb-fill {
-  position: relative;
-  z-index: 2;               /* above the bottom of the fill, so its curve shows */
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--bulb-color, var(--accent)), #fff 30%), var(--bulb-color, var(--accent)) 60%);
-}
-
-/* TEST_MODE: the thermometer can be clicked or dragged */
-.thermometer.testing {
-  cursor: ns-resize;
-  touch-action: none;
-  user-select: none;
-}
-
-/* Dollar marks along the left of the tube */
-.scale {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Each mark is a short tick just outside the tube's left edge, so it
-   never crosses the tube or its rounded top */
-.mark {
-  position: absolute;
-  left: calc(var(--tube-border) * -1 - 12px);
-  width: 12px;
-  height: 2px;
-  margin-bottom: -1px;          /* centered on its amount */
-  border-radius: 1px;
-  background: color-mix(in srgb, var(--text) 60%, transparent);
-}
-
-.mark span {
-  position: absolute;
-  right: calc(100% + 6px);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  font-size: .8125rem;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Donation form: FORM_HEIGHT tall, scrolling inside itself if it's longer */
@@ -610,15 +449,19 @@ h1 {
   .content .pairs .pair-right { text-align: center; }
 }
 
+/* Mid-size screens: no room for three across, so the top row's text goes
+   under the map, with the form to their right */
+@media (max-width: 1300px) {
+  .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--form-width)); row-gap: 40px; }
+  .row-top .donate { grid-column: 2; grid-row: 1 / span 2; }
+}
+
 /* Narrow screens: no room for side by side, so each row stacks, left
-   section first. In the form card, the thermometer goes above the form. */
+   section first */
 @media (max-width: 900px) {
   .page { padding: 40px 16px 64px; }
   .title-block { margin-bottom: 40px; }
   .row,
-  .row-form { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
-  .card { padding: 16px; }
-  .form-card { flex-direction: column; }
-  .form-card .donate { flex: none; }
-  .meter { order: -1; height: 400px; }
+  .row-top { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin-bottom: calc(var(--row-gap) * .6); }
+  .row-top .donate { grid-column: auto; grid-row: auto; }
 }

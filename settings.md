@@ -14,16 +14,10 @@ Sizes are in screen pixels at normal zoom. 96 pixels is about 1 inch.
 
 ## Colors
 
-The accent color is used for the numbered-step circles in the page text. (The thermometer has its own colors, under "The thermometer" below.)
+The accent color is used for the numbered-step circles in the page text.
 
 ```js
 ACCENT_COLOR = "#6BC04B"
-```
-
-The background of the rounded cards the donation forms sit in.
-
-```js
-CARD_COLOR = "#91BD7D"
 ```
 
 The page's background color, behind the info.
@@ -40,7 +34,7 @@ TEXT_COLOR = "#22302B"
 
 ## Fonts
 
-The font for headings (the page title and the big dollar amount) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.
+The font for headings (the page title and the headings in the text) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.
 
 ```js
 HEADING_FONT = "Gotham Rounded"
@@ -67,58 +61,9 @@ The font shown while the main font loads, or instead of it if it can't be found 
 FALLBACK_FONT = "Nunito"
 ```
 
-## The thermometer
-
-The goal shown before the first Zeffy sync. Once the GitHub Action has synced, the goal set on the Zeffy campaign is used instead (if it has one), so change it there too.
-
-```js
-DEFAULT_GOAL = 10000
-```
-
-The line under the big dollar amount. `{goal}` is replaced with the goal amount (for example $10,000), so `"raised of {goal}"` shows "raised of $10,000". Leave `{goal}` out to show just your own words, or use `""` for no line at all.
-
-```js
-RAISED_LABEL = ""
-```
-
-How far apart the dollar marks along the tube are. `2500` puts marks at $2,500, $5,000, $7,500 and $10,000. `0` hides them.
-
-```js
-SCALE_STEP = 2500
-```
-
-The colors inside the thermometer, as a list from the bottom up. The first color fills the bulb and the bottom of the tube, and fades into the second, which fades into the third, spaced evenly up the whole tube. So at the halfway mark you see the second color, and only a full thermometer shows the third. The list can be any length: one color for a solid fill, or more than three for more steps.
-
-```js
-THERMOMETER_COLORS = [
-  "#FF4124",   // 1: bottom (and the bulb)
-  "#FFF024",   // 2: middle
-  "#8CF94D",   // 3: top
-]
-```
-
-A light shine down the middle of the tube and a highlight on the bulb, which make them look round (`true`), or flat color (`false`).
-
-```js
-THERMOMETER_SHINE = false
-```
-
-How wide the tube is. The bulb at the bottom grows with it.
-
-```js
-THERMOMETER_WIDTH = 40
-```
-
-Whether the thermometer fills up and the dollar amount counts up when the page opens (`true`), or both just appear already filled (`false`). The second setting is how long the fill takes, in milliseconds (1000 = 1 second).
-
-```js
-ANIMATE_ON_LOAD = true
-FILL_ANIMATION_MS = 1600
-```
-
 ## The page layout
 
-From top to bottom: the title, centered; text beside the donation form (with the thermometer to the form's right); the route map beside text; text beside a picture; two texts side by side; and the donation form again at the bottom. On narrow screens (phones, small tablets) each pair stacks, left one first, and the thermometer goes above the form.
+From top to bottom: the title, centered; the route map, text and the donation form side by side; text beside a picture; and two texts side by side. On a mid-size screen the top row's text goes under the map. On narrow screens (phones, small tablets) everything stacks, left one first.
 
 How far the page's contents stay from the left and right edges of the screen, in pixels (phones always use 16).
 
@@ -139,7 +84,7 @@ PAGE_WIDTH = 1600
 HIDE_SCROLLBAR = true
 ```
 
-The space between one row of sections and the next, and between the two sections side by side in a row.
+The space between one row of sections and the next, and between the sections side by side in a row.
 
 ```js
 ROW_GAP = 96
@@ -159,30 +104,24 @@ SIDE_PICTURE = "images/college_tour_students.jpg"
 SIDE_PICTURE_WORDS = ""
 ```
 
-## The donation forms
+## The donation form
 
-The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. It's used for both the form at the top and the one at the bottom. `""` shows placeholder boxes instead.
+The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. `""` shows a placeholder box instead.
 
 ```js
 ZEFFY_FORM_LINK = ""
 ```
 
-How tall the forms are, in pixels. A form longer than this scrolls inside itself. The thermometer beside the top form is the same height.
+How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
 
 ```js
 FORM_HEIGHT = 720
-```
-
-How wide the top card (the form and the thermometer) is, and how wide the bottom form's card is.
-
-```js
-FORM_CARD_WIDTH = 600
-BOTTOM_FORM_WIDTH = 560
+FORM_WIDTH = 480
 ```
 
 ## Page text and pictures
 
-Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md`, `beside-map.md`, `beside-picture.md`, `bottom-left.md` and `bottom-right.md`. Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
+Each section of words on the page has its own file in the `text` folder, named for where it is: `title.md` (the big title at the top), `beside-form.md` (between the map and the form), `beside-picture.md`, `bottom-left.md` and `bottom-right.md`. Open one in any text editor, change the words, save, and reload the page. Pictures go in the `images` folder.
 
 How to write it:
 
@@ -202,7 +141,7 @@ TEXT_SIZE = 17
 TITLE_SIZE = 56
 ```
 
-Text sections to center, by file name, like `["beside-map.md", "bottom-left.md"]`. `[]` centers none. (The title is always centered. To center just part of a section, use `->` and `<-` as above.)
+Text sections to center, by file name, like `["beside-form.md", "bottom-left.md"]`. `[]` centers none. (The title is always centered. To center just part of a section, use `->` and `<-` as above.)
 
 ```js
 CENTERED_TEXT = []
@@ -213,7 +152,7 @@ Pictures:
 - Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in a text file. The words in the square brackets are read aloud to people who can't see the picture.
 - On a line of its own, a picture sits by itself, centered.
 - Add `{banner}` after it (`![words](images/x.jpg) {banner}`) to make it a banner: it runs the full width of the section, edge to edge, with square corners.
-- `!map!` on a line of its own shows another copy of the route map (it already has its own spot, beside `beside-map.md`).
+- `!map!` on a line of its own shows another copy of the route map (it already has its own spot, at the top).
 - A picture from another website works too, as long as its address starts with `https://`.
 - Keep pictures under about 500 KB each (around 1500 pixels wide is plenty) so the page loads fast.
 
@@ -243,7 +182,7 @@ BANNER_HEIGHT = 0
 
 ## The route map
 
-The animated map of the tour route, beside `text/beside-map.md`. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
+The animated map of the tour route, at the top left. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
 
 Positions are pixels on the satellite picture (`images/California-Satellite-Map.jpg`, 2114 wide and 2030 tall), counted from its top left corner. You don't have to measure them: turn on `MAP_EDIT_MODE` (below) and click the map.
 
@@ -321,18 +260,4 @@ ROUTE_DRAW_MS = 4000
 
 ```js
 MAP_EDIT_MODE = false
-```
-
-## Testing
-
-Test mode lets you click or drag up and down on the thermometer to see how it looks at different amounts. It only changes what your own browser shows: the real total in `progress.json` isn't touched, and reloading the page goes back to it. Remember to turn it off (`false`) before the page goes live.
-
-```js
-TEST_MODE = true
-```
-
-When you click or drag, the amount is rounded to the nearest this many dollars.
-
-```js
-TEST_MODE_STEP = 50
 ```

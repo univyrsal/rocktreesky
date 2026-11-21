@@ -75,43 +75,20 @@ function loadFonts() {
   }
 }
 
-const money = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-});
-
 const root = document.documentElement;
-const thermometer = document.querySelector('.thermometer');
-const fill = document.querySelector('.fill');
-const scale = document.querySelector('.scale');
-const raisedEl = document.querySelector('.raised');
-const labelEl = document.querySelector('.raised-label');
-const donorsEl = document.querySelector('.donors');
-
 
 function applySettings() {
   root.style.setProperty('--accent', setting('ACCENT_COLOR', '#6ABF4B'));
-  root.style.setProperty('--card', setting('CARD_COLOR', '#FCFBF5'));
-  // Bottom to top, evenly spaced; the bulb is the first (bottom) color
-  let colors = setting('THERMOMETER_COLORS', []).filter((c) => typeof c === 'string' && c.trim());
-  if (!colors.length) colors = [setting('ACCENT_COLOR', '#6ABF4B')];
-  if (colors.length === 1) colors.push(colors[0]);
-  root.style.setProperty('--fill-colors', colors.join(', '));
-  root.style.setProperty('--bulb-color', colors[0]);
-  thermometer.classList.toggle('flat', !setting('THERMOMETER_SHINE', true));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
   root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
-  root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 40) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
-  root.style.setProperty('--card-width', Math.max(300, setting('FORM_CARD_WIDTH', 600)) + 'px');
-  root.style.setProperty('--bottom-form-width', Math.max(300, setting('BOTTOM_FORM_WIDTH', 560)) + 'px');
+  root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
 
   // The page's layout
   root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1600)) + 'px');
   root.style.setProperty('--text-size', Math.max(10, setting('TEXT_SIZE', 17)) + 'px');
   root.style.setProperty('--title-size', Math.max(16, setting('TITLE_SIZE', 56)) + 'px');
-  // CENTERED_TEXT: text sections centered, by file name ("beside-map.md")
+  // CENTERED_TEXT: text sections centered, by file name ("beside-form.md")
   const sectionName = (n) => String(n).replace(/^.*\//, '').replace(/\.md$/i, '').toLowerCase();
   const centered = setting('CENTERED_TEXT', []).map(sectionName);
   document.querySelectorAll('[data-md]').forEach((el) => {
@@ -122,7 +99,6 @@ function applySettings() {
   root.style.setProperty('--row-gap', Math.max(0, setting('ROW_GAP', 96)) + 'px');
   root.style.setProperty('--column-gap', Math.max(0, setting('COLUMN_GAP', 64)) + 'px');
   root.style.setProperty('--picture-gap', Math.max(0, setting('PICTURE_GAP', 64)) + 'px');
-  root.style.setProperty('--fill-duration', setting('FILL_ANIMATION_MS', 1600) + 'ms');
 
   root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
   // 0 = as tall as the picture works out; any other number sets the height.
@@ -136,7 +112,7 @@ function applySettings() {
 }
 
 // The Zeffy donation form (settings.md: ZEFFY_FORM_LINK). Takes the form's
-// normal link or its embed link, and shows the embed version in the panel.
+// normal link or its embed link, and shows the embed version.
 function showDonateForm() {
   const link = setting('ZEFFY_FORM_LINK', '').trim();
   if (!link) return;
@@ -152,7 +128,6 @@ function showDonateForm() {
   if (!parts.includes('embed')) parts.splice(/^[a-z]{2}(-[a-z]{2})?$/i.test(parts[0] || '') ? 1 : 0, 0, 'embed');
   url.pathname = '/' + parts.join('/');
 
-  // The same form goes in each place for it (the top card and the bottom)
   document.querySelectorAll('.donate').forEach((spot) => {
     const frame = document.createElement('iframe');
     frame.className = 'donate-form';
@@ -165,7 +140,7 @@ function showDonateForm() {
   });
 }
 
-// SIDE_PICTURE: the picture beside the text in the third row
+// SIDE_PICTURE: the picture beside the text in the second row
 function showSidePicture() {
   const file = setting('SIDE_PICTURE', '').trim();
   if (!file) return;
@@ -204,108 +179,6 @@ function loadContent() {
       .catch((err) => console.warn(section.dataset.md + ' could not be loaded (' + err.message + ').'))));
 }
 
-// The fill's colors are spread over the whole tube, so it needs the tube's height
-new ResizeObserver(([entry]) => {
-  fill.style.setProperty('--track-height', entry.contentRect.height + 'px');
-}).observe(document.querySelector('.track'));
-
-// What the thermometer is showing right now
-let shownGoal = 10000;
-let shownRaised = 0;
-let countRun = 0;
-
-function countUp(from, to, duration) {
-  const run = ++countRun; // a newer count-up stops this one
-  const start = performance.now();
-  function frame(now) {
-    if (run !== countRun) return;
-    const t = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    raisedEl.textContent = money.format(Math.round(from + (to - from) * eased));
-    if (t < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-  return run;
-}
-
-// Fill the thermometer to an amount, gliding there or jumping straight there
-function showRaised(raised, animate) {
-  const pct = Math.min(raised / shownGoal, 1) * 100;
-  const from = shownRaised;
-  shownRaised = raised;
-  thermometer.setAttribute('aria-valuenow', raised);
-  thermometer.setAttribute('aria-valuetext', `${money.format(raised)} of ${money.format(shownGoal)}`);
-
-  if (!animate) {
-    countRun++;
-    fill.style.transition = 'none';
-    fill.style.height = `${pct}%`;
-    raisedEl.textContent = money.format(raised);
-    return;
-  }
-  fill.style.transition = '';
-  const run = countUp(from, raised, setting('FILL_ANIMATION_MS', 1600));
-  // Next frame so the height transition actually runs, unless something
-  // newer (a drag in test mode) has already moved it on
-  requestAnimationFrame(() => { if (run === countRun) fill.style.height = `${pct}%`; });
-}
-
-function drawScale(goal) {
-  const step = setting('SCALE_STEP', 2500);
-  scale.innerHTML = '';
-  if (step <= 0) return;
-  for (let amount = step; amount <= goal; amount += step) {
-    const mark = document.createElement('div');
-    mark.className = 'mark';
-    mark.style.bottom = `${(amount / goal) * 100}%`;
-    mark.innerHTML = `<span>${money.format(amount)}</span>`;
-    scale.appendChild(mark);
-  }
-}
-
-function render({ raised = 0, goal = setting('DEFAULT_GOAL', 10000), donors = 0 }) {
-  shownGoal = goal;
-  // RAISED_LABEL: the line under the amount; {goal} becomes the goal amount
-  labelEl.textContent = String(setting('RAISED_LABEL', 'raised of {goal}')).split('{goal}').join(money.format(goal));
-  thermometer.setAttribute('aria-valuemax', goal);
-  if (donors > 0) donorsEl.textContent = `${donors} ${donors === 1 ? 'donor' : 'donors'}`;
-  drawScale(goal);
-  showRaised(raised, setting('ANIMATE_ON_LOAD', true));
-  if (setting('TEST_MODE', false)) startTestMode();
-}
-
-// TEST_MODE: click or drag on the thermometer to try out different amounts.
-// Only changes what this browser shows; the real total is untouched.
-function startTestMode() {
-  const track = document.querySelector('.track');
-  thermometer.classList.add('testing');
-
-  const amountAt = (y) => {
-    const box = track.getBoundingClientRect();
-    const pct = Math.min(Math.max((box.bottom - y) / box.height, 0), 1);
-    const step = Math.max(1, setting('TEST_MODE_STEP', 50));
-    return Math.min(Math.round((shownGoal * pct) / step) * step, shownGoal);
-  };
-  let dragging = false;
-  thermometer.addEventListener('pointerdown', (e) => {
-    dragging = true;
-    thermometer.setPointerCapture(e.pointerId);
-    showRaised(amountAt(e.clientY), true);
-    e.preventDefault();
-  });
-  thermometer.addEventListener('pointermove', (e) => {
-    if (dragging) showRaised(amountAt(e.clientY), false);
-  });
-  const stop = () => { dragging = false; };
-  thermometer.addEventListener('pointerup', stop);
-  thermometer.addEventListener('pointercancel', stop);
-}
-
-// Cache-bust: GitHub Pages caches files for ~10 minutes
-const progress = fetch(`progress.json?t=${Date.now()}`)
-  .then((res) => (res.ok ? res.json() : {}))
-  .catch(() => ({}));
-
 const contentReady = loadContent();
 const settingsReady = loadSettings();
 
@@ -314,8 +187,7 @@ settingsReady.then(() => {
   applySettings();
   showDonateForm();
   showSidePicture();
-  return progress;
-}).then(render);
+});
 
 // The route map needs both the page text (for where !map! is) and the settings
 Promise.all([contentReady, settingsReady]).then(buildRouteMaps);
