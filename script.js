@@ -112,6 +112,8 @@ function applySettings() {
   root.style.setProperty('--section-padding', Math.max(0, setting('SECTION_PADDING', 64)) + 'px');
   root.style.setProperty('--section-title-size', Math.max(12, setting('SECTION_TITLE_SIZE', 36)) + 'px');
   showSections();
+  // MAP_CARD: the route map in a rounded box like the BOXED_TEXT ones
+  document.querySelector('.map-col')?.classList.toggle('map-card', setting('MAP_CARD', true));
 
   root.style.setProperty('--picture-width', Math.max(20, setting('PICTURE_WIDTH', 720)) + 'px');
   // 0 = as tall as the picture works out; any other number sets the height.
@@ -192,6 +194,7 @@ function showLogo() {
   img.addEventListener('error', () => console.warn(`LOGO_IMAGE in settings.md: couldn't load "${file}". Check the file is in the images folder and the name matches.`));
   logo.replaceChildren(img);
   logo.hidden = false;
+  logo.classList.toggle('black', setting('LOGO_BLACK', false));
   // Room either side of the title for the logo, so the title stays in the middle
   new ResizeObserver(() => {
     root.style.setProperty('--logo-space', img.offsetWidth ? img.offsetWidth + 16 + 'px' : '0px');
@@ -256,6 +259,16 @@ function slideInBoxes() {
   })());
   root.style.setProperty('--box-slide-ms', Math.max(0, setting('BOX_ANIMATION_MS', 700)) + 'ms');
   const boxes = [...document.querySelectorAll('.boxed .text-box')];
+
+  // BOX_SCATTER: each box nudged a random amount up, down, left or right
+  // (less on a phone, where there's little room either side)
+  const scatter = Math.max(0, setting('BOX_SCATTER', 20)) * (innerWidth <= 900 ? 0.4 : 1);
+  const nudge = () => Math.round((Math.random() * 2 - 1) * scatter) + 'px';
+  boxes.forEach((box) => {
+    box.style.setProperty('--nudge-x', nudge());
+    box.style.setProperty('--nudge-y', nudge());
+  });
+
   if (!boxes.length || !setting('BOX_ANIMATION', true)) return;
 
   boxes.forEach((box, i) => {
@@ -273,7 +286,11 @@ function slideInBoxes() {
       e.target.classList.remove('waiting');
       watch.unobserve(e.target);
     });
-  }, { threshold: 0.15 });
+  }, {
+    // BOX_START: a box starts sliding in once its top is this far up the
+    // screen (percent of the screen's height, from the bottom)
+    rootMargin: `0px 0px -${Math.min(90, Math.max(0, setting('BOX_START', 25)))}% 0px`,
+  });
   boxes.forEach((box) => watch.observe(box));
 }
 

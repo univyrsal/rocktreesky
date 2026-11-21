@@ -50,6 +50,13 @@ LOGO_HEIGHT = 72
 LOGO_WORDS = "Rock Tree Sky home page"
 ```
 
+- `true` = the logo is shown all black.
+- `false` = its own colors.
+
+```js
+LOGO_BLACK = false
+```
+
 ## Fonts
 
 The font for headings (the page title and the headings in the text) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.
@@ -130,7 +137,7 @@ Each row's color and title. The rows are `top` (the map, text and form), `middle
 SECTIONS = {
   top:    { color: "", title: "" },
   middle: { color: "", title: "" },
-  bottom: { color: "", title: "Hear Straight From Students" },
+  bottom: { color: "", title: "Hear From The Students" },
 }
 ```
 
@@ -165,7 +172,7 @@ ZEFFY_FORM_LINK = ""
 The words in the box while `ZEFFY_FORM_LINK` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
 
 ```js
-FORM_PLACEHOLDER = "Zeffy donation payment form will go inside this box (with details such as funds raised etc)"
+FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc)"
 ```
 
 How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
@@ -218,6 +225,18 @@ BOX_ANIMATION = true
 BOX_ANIMATION_MS = 700
 ```
 
+How far up the screen a box's top has to come before it slides in, in percent of the screen's height from the bottom. `0` = as soon as it peeks in at the bottom; `25` = a quarter of the way up.
+
+```js
+BOX_START = 25
+```
+
+How far each box is nudged off line, at random, in pixels (up to this much up or down and left or right; less on phones). `0` = all lined up.
+
+```js
+BOX_SCATTER = 20
+```
+
 Pictures:
 
 - Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in a text file. The words in the square brackets are read aloud to people who can't see the picture.
@@ -255,6 +274,13 @@ BANNER_HEIGHT = 0
 
 The animated map of the tour route, at the top left. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
 
+- `true` = the map sits in a rounded box like the student quotes (`BOX_COLOR`).
+- `false` = just the map on the page.
+
+```js
+MAP_CARD = true
+```
+
 Positions are pixels on the satellite picture (`images/California-Satellite-Map.jpg`, 2114 wide and 2030 tall), counted from its top left corner. You don't have to measure them: turn on `MAP_EDIT_MODE` (below) and click the map.
 
 The route, in order:
@@ -264,7 +290,7 @@ The route, in order:
 
 ```js
 ROUTE = [
-  ["Ojai (start)", 1104, 1629],
+  ["Ojai", 1104, 1629],
   [1093, 1643], [1094, 1654], [1092, 1660], [1088, 1660], [1054, 1640], [939, 1628], [936, 1622], [938, 1602],
   [937, 1595], [901, 1535], [867, 1488], [855, 1458], [847, 1380], [812, 1301], [773, 1260], [734, 1211],
   [681, 1158], [678, 1139], [663, 1138], [660, 1131], [660, 1114], [659, 1107], [640, 1095], [620, 1095],

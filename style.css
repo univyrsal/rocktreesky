@@ -75,6 +75,9 @@ body {
   line-height: 0;
 }
 
+/* LOGO_BLACK: every colored part of the logo turned black */
+.logo.black img { filter: brightness(0); }
+
 .logo img {
   display: block;
   width: auto;
@@ -120,9 +123,19 @@ body {
 .text-box > :first-child { margin-top: 0; }
 .text-box > :last-child { margin-bottom: 0; }
 
+/* BOX_SCATTER: each box sits a little off from where it would be */
+.text-box { transform: translate(var(--nudge-x, 0px), var(--nudge-y, 0px)); }
+
 .text-box.waiting {
   opacity: 0;
-  transform: translateX(calc(var(--slide, -1) * 80px));
+  transform: translate(calc(var(--nudge-x, 0px) + var(--slide, -1) * 80px), var(--nudge-y, 0px));
+}
+
+/* MAP_CARD: the route map in a box like the BOXED_TEXT ones */
+.map-card {
+  padding: 28px 32px;
+  border-radius: 20px;
+  background: var(--box-color);
 }
 
 /* A colored last row runs down to the bottom of the page */
