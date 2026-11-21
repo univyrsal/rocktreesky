@@ -103,6 +103,7 @@ function applySettings() {
   root.style.setProperty('--bulb-color', colors[0]);
   thermometer.classList.toggle('flat', !setting('THERMOMETER_SHINE', true));
   root.style.setProperty('--bg', setting('BACKGROUND_COLOR', '#F6F3EE'));
+  root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
   root.style.setProperty('--thermometer-width', setting('THERMOMETER_WIDTH', 56) + 'px');
   root.style.setProperty('--pay-width', setting('PAY_PANEL_WIDTH', 420) + 'px');
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT_ON_PHONES', 1000)) + 'px');
@@ -263,11 +264,15 @@ const progress = fetch(`progress.json?t=${Date.now()}`)
   .then((res) => (res.ok ? res.json() : {}))
   .catch(() => ({}));
 
-loadContent();
+const contentReady = loadContent();
+const settingsReady = loadSettings();
 
-loadSettings().then(() => {
+settingsReady.then(() => {
   loadFonts();
   applySettings();
   showDonateForm();
   return progress;
 }).then(render);
+
+// The route map needs both the page text (for where !map! is) and the settings
+Promise.all([contentReady, settingsReady]).then(buildRouteMaps);

@@ -119,6 +119,9 @@ function markdownToHtml(md) {
     // of its own (!map!). It stands apart from the words around it whether
     // or not a blank line was left before it. A name nothing is listed
     // under is left as the words it is.
+    // !map! is the route map (map.js); {banner} after it runs it the full
+    // width of the section.
+    if ((m = line.match(/^!map!(s*{banner})?$/i))) { flushAll(); spaceOut(); out.push('<div class="route-map-slot' + (m[1] ? ' banner' : '') + '"></div>'); continue; }
     if (/^![A-Za-z0-9_-]+!$/.test(line)) { flushAll(); spaceOut(); out.push('<p>' + esc(line) + '</p>'); continue; }
     if ((m = line.match(/^([-*+]|\d+[.)])\s+(.*)$/))) {
       flushPara(); flushPairs();

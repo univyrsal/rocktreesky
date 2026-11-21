@@ -344,7 +344,8 @@ h1 {
 /* {banner} after a picture: it runs the full width of the section, past
    the text column and its side padding, with square corners.
    (100cqw is the section's width inside its padding.) */
-.content p.picture.banner {
+.content p.picture.banner,
+.content .route-map.banner {
   width: calc(100cqw + 2 * var(--info-pad));
   max-width: none;
   margin-left: calc(50% - 50cqw - var(--info-pad));
@@ -360,6 +361,172 @@ h1 {
   object-fit: cover;
   object-position: center;
   border-radius: 0;
+}
+
+/* The route map (!map! in content.md; map.js). Sizes are in cqw, a
+   percent of the map's width, so the words grow and shrink with the map,
+   with a smallest and largest size so they stay readable. */
+.route-map {
+  position: relative;
+  margin: 1.2em 0 1.6em;
+  container-type: inline-size;
+  line-height: 1.25;
+}
+
+.rm-stage {
+  position: relative;
+  aspect-ratio: 2114 / 2030;
+}
+
+.rm-stage > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rm-line,
+.rm-casing {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rm-line { stroke: var(--route-color); }
+.rm-casing { stroke: rgba(0, 0, 0, .45); }
+
+/* The detail box, the area it zooms in on, and the lines joining them */
+.rm-area { fill: none; stroke: #fff; stroke-width: 3; }
+.rm-link { stroke: #fff; stroke-width: 1.5; }
+.rm-frame { fill: none; stroke: #1b1d1d; stroke-width: 5; }
+
+.rm-detail-title {
+  position: absolute;
+  margin: 0;
+  font: var(--heading-weight) clamp(11px, 2.2cqw, 22px) / 1.2 var(--heading-font);
+  white-space: nowrap;
+}
+
+/* A stop: the marker sits on the spot, the name beside it */
+.rm-marks { position: absolute; inset: 0; pointer-events: none; }
+
+.rm-stop {
+  --dot: clamp(16px, 2.3cqw, 26px);
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity .3s, transform .35s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+.rm-stop.shown { opacity: 1; transform: none; }
+
+.rm-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dot);
+  height: var(--dot);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--stop-color);
+  color: #fff;
+  font-size: calc(var(--dot) * .55);
+  line-height: 1;
+}
+
+.rm-stop .rm-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.rm-start { --dot: clamp(13px, 1.7cqw, 20px); }
+.rm-start .rm-dot { background: var(--start-color); }
+.rm-small { --dot: clamp(7px, .8cqw, 11px); }
+.rm-small .rm-dot { border-width: 1.5px; }
+
+.rm-label {
+  position: absolute;
+  padding: .2em .45em;
+  border-radius: 6px;
+  background: rgba(27, 29, 29, .9);
+  color: #fff;
+  font-size: clamp(10px, 1.6cqw, 16px);
+  white-space: nowrap;
+}
+
+.rm-stop[data-side="right"] .rm-label { left: calc(var(--dot) / 2 + 5px); transform: translateY(-50%); }
+.rm-stop[data-side="left"] .rm-label { right: calc(var(--dot) / 2 + 5px); transform: translateY(-50%); }
+.rm-stop[data-side="below"] .rm-label { top: calc(var(--dot) / 2 + 4px); transform: translateX(-50%); }
+.rm-stop[data-side="above"] .rm-label { bottom: calc(var(--dot) / 2 + 4px); transform: translateX(-50%); }
+
+/* The key: the title, the numbered stops and what the line means */
+.rm-legend { position: absolute; }
+
+.rm-legend p,
+.rm-legend ol { margin: 0; padding: 0; list-style: none; }
+
+.rm-legend-title {
+  margin-bottom: .35em !important;
+  font: var(--heading-weight) clamp(14px, 2.4cqw, 26px) / 1.2 var(--heading-font);
+}
+
+.rm-legend li {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  margin: 0 0 .3em;
+  font-size: clamp(11px, 1.7cqw, 17px);
+}
+
+.rm-legend .rm-dot { --dot: 1.6em; font-size: .85em; }
+
+.rm-note {
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  margin-top: .5em !important;
+  color: var(--muted);
+  font-size: clamp(10px, 1.25cqw, 13px);
+}
+
+.rm-swatch {
+  flex: none;
+  width: 2.4em;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--route-color);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .45);
+}
+
+/* No room on a small map: the key goes under it */
+.rm-legend.rm-below { position: static; margin-top: 12px; }
+
+@container (max-width: 520px) {
+  .rm-legend { position: static; margin-top: 12px; }
+  .rm-detail-title { display: none; }  /* runs into the box's labels */
+}
+
+/* MAP_EDIT_MODE */
+.rm-editing .rm-stage { cursor: crosshair; }
+
+.rm-edit {
+  margin-top: 12px;
+  padding: 12px;
+  border: 2px dashed currentColor;
+  border-radius: 8px;
+  font-size: .875rem;
+}
+
+.rm-edit p { margin: 0 0 .5em; }
+
+.rm-edit textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: .5em;
+  font: .875rem/1.4 ui-monospace, monospace;
 }
 
 /* PICTURE_HEIGHT: every picture the same height, filling it and its width,

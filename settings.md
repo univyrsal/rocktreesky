@@ -32,6 +32,12 @@ The page's background color, behind the info.
 BACKGROUND_COLOR = "#CCCCCC"
 ```
 
+The color of the words.
+
+```js
+TEXT_COLOR = "#22302B"
+```
+
 ## Fonts
 
 The font for headings (the page title and the big dollar amount) and the font for everything else, each with its weight: `400` is regular, `500` medium, `700` bold, `900` black. Type the font's name exactly as its maker spells it.
@@ -165,6 +171,7 @@ Pictures:
 - Put the picture file in the `images` folder, then write `![a few words describing it](images/the-file-name.jpg)` in `content.md`. The words in the square brackets are read aloud to people who can't see the picture.
 - On a line of its own, a picture sits by itself, centered.
 - Add `{banner}` after it (`![words](images/x.jpg) {banner}`) to make it a banner: it runs the full width of the section, edge to edge, with square corners.
+- `!map!` on a line of its own shows the route map (see "The route map" below). `!map! {banner}` runs it the full width of the section.
 - A picture from another website works too, as long as its address starts with `https://`.
 - Keep pictures under about 500 KB each (around 1500 pixels wide is plenty) so the page loads fast.
 
@@ -190,6 +197,88 @@ How tall `{banner}` pictures are, in pixels. 0 lets each keep its own shape. Any
 
 ```js
 BANNER_HEIGHT = 0
+```
+
+## The route map
+
+The animated map of the tour route, shown wherever `!map!` is in `content.md`. When it scrolls into view, the line draws itself from the start, and each stop pops up as the line reaches it.
+
+Positions are pixels on the satellite picture (`images/California-Satellite-Map.jpg`, 2114 wide and 2030 tall), counted from its top left corner. You don't have to measure them: turn on `MAP_EDIT_MODE` (below) and click the map.
+
+The route, in order:
+
+- `["Name", x, y]` is a stop. The first one is the start (a blue dot); the rest are numbered 1, 2, 3 in order and listed in the key. Add `"left"`, `"right"`, `"above"` or `"below"` after the position to say which side of the dot its name goes (right if left out).
+- `[x, y]` is just a bend in the road. The line goes straight from each position to the next, so add bends wherever the road turns. Several can go on one line.
+
+```js
+ROUTE = [
+  ["Ojai (start)", 1104, 1629],
+  [1093, 1643], [1094, 1654], [1092, 1660], [1088, 1660], [1054, 1640], [939, 1628], [936, 1622], [938, 1602],
+  [937, 1595], [901, 1535], [867, 1488], [855, 1458], [847, 1380], [812, 1301], [773, 1260], [734, 1211],
+  [681, 1158], [678, 1139], [663, 1138], [660, 1131], [660, 1114], [659, 1107], [640, 1095], [620, 1095],
+  ["UC Santa Cruz", 613, 1092, "left"],
+  [620, 1089], [626, 1062], [628, 1041], [636, 1026],
+  ["San José State", 643, 1019, "below"],
+  [634, 1021], [616, 1019], [597, 1007],
+  ["Stanford", 595, 999, "left"],
+  [597, 991], [604, 983], [622, 976], [605, 946], [575, 913],
+  ["UC Berkeley", 580, 904],
+]
+```
+
+Colors of the line, the numbered stops and the start, and how thick the line is in screen pixels.
+
+```js
+ROUTE_COLOR = "#FDC500"
+STOP_COLOR = "#DC283C"
+START_COLOR = "#1E78FF"
+ROUTE_WIDTH = 4
+```
+
+The key's title and the note under its list of stops. `""` leaves either out.
+
+```js
+ROUTE_TITLE = "Route from Ojai"
+ROUTE_NOTE = "Approx. driving route (US-101, CA-1, CA-17, I-280, I-880)"
+```
+
+Where the key's top left corner goes on the map. `[]` puts it under the map instead. (On a small screen it always goes under the map.)
+
+```js
+MAP_LEGEND_AT = [70, 1650]
+```
+
+The zoomed-in box, for stops too close together to read on the whole map:
+
+- `area`: the top left and bottom right corners of the part of the map to zoom in on.
+- `at`: where the box's top left corner goes on the map.
+- `width`: how wide the box is, in map pixels. Its height follows the area's shape. The bigger it is compared to the area, the more it zooms in.
+- `title`: shown beside the box. `""` for none.
+
+Stops inside the area get their numbers and names in the box, and a small dot on the main map. Use `MAP_DETAIL = null` for no box.
+
+```js
+MAP_DETAIL = {
+  area: [[520, 883], [687, 1115]],
+  at: [1135, 35],
+  width: 564,
+  title: "Bay Area detail",
+}
+```
+
+- `true` = the line draws itself when the map scrolls into view, taking `ROUTE_DRAW_MS` (1000 = 1 second).
+- `false` = the whole route is just there.
+
+```js
+ROUTE_ANIMATION = true
+ROUTE_DRAW_MS = 4000
+```
+
+- `true` = clicking the map shows its position and copies it, to paste into the settings above. A click in the zoomed box gives the spot's position on the main map. Turn it off before the page goes live.
+- `false` = normal.
+
+```js
+MAP_EDIT_MODE = false
 ```
 
 ## Testing
