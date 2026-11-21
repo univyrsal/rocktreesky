@@ -200,6 +200,7 @@ body {
 .donate { height: var(--form-height); }
 .donate.has-widget { height: auto; }
 .donate givebutter-widget { display: block; width: 100%; }
+.donate givebutter-widget + givebutter-widget { margin-top: 16px; }   /* a list of widgets */
 
 .form-placeholder {
   height: 100%;

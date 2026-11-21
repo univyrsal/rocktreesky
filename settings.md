@@ -165,11 +165,11 @@ SECTION_PICTURE_HEIGHT = 480
 The Givebutter donation form. Givebutter's embed code has two parts:
 
 - `GIVEBUTTER_ACCOUNT`: the `acct=` part of the `<script>` line (your Givebutter account, the same for every widget).
-- `GIVEBUTTER_WIDGET`: the widget's ID, from the `<givebutter-widget id="...">` line (in Givebutter: the campaign → Sharing → Widgets). You can paste that whole line here between the quotes. `""` shows a placeholder box instead.
+- `GIVEBUTTER_WIDGET`: the widget's ID, from the `<givebutter-widget id="...">` line (in Givebutter: the campaign → Sharing → Widgets). You can paste that whole line here between the quotes. For more than one widget stacked top to bottom (like a goal bar above a donation form), list them: `["gMYZav", "abc123"]`. `""` shows a placeholder box instead.
 
 ```js
 GIVEBUTTER_ACCOUNT = "ntw9fFA5tDQHtDt7"
-GIVEBUTTER_WIDGET = ""
+GIVEBUTTER_WIDGET = "gMYZav"
 ```
 
 The words in the placeholder box while `GIVEBUTTER_WIDGET` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.

@@ -174,11 +174,13 @@ function showSections() {
 // tag into the form.
 function showDonateForm() {
   const account = setting('GIVEBUTTER_ACCOUNT', '').trim();
-  // The widget's ID, or the whole <givebutter-widget id="..."> tag pasted in
-  const pasted = setting('GIVEBUTTER_WIDGET', '').trim();
-  const widget = (pasted.match(/id\s*=\s*["']?([\w-]+)/i) || [])[1] || (/^[\w-]+$/.test(pasted) ? pasted : '');
-  if (!account || !widget) {
-    if (pasted && !widget) console.warn('GIVEBUTTER_WIDGET in settings.md should be the widget\'s ID or its <givebutter-widget id="..."> tag; showing the placeholder instead.');
+  // One widget or a list of them, top to bottom. Each is its ID, or the
+  // whole <givebutter-widget id="..."> tag pasted in.
+  const raw = window.GIVEBUTTER_WIDGET;
+  const pasted = (Array.isArray(raw) ? raw : [raw]).filter((w) => typeof w === 'string' && w.trim()).map((w) => w.trim());
+  const widgets = pasted.map((w) => (w.match(/id\s*=\s*["']?([\w-]+)/i) || [])[1] || (/^[\w-]+$/.test(w) ? w : '')).filter(Boolean);
+  if (pasted.length > widgets.length) console.warn('GIVEBUTTER_WIDGET in settings.md: each one should be a widget\'s ID or its <givebutter-widget id="..."> tag; skipping the ones that aren\'t.');
+  if (!account || !widgets.length) {
     // FORM_PLACEHOLDER: the words in the box until there's a form
     const words = setting('FORM_PLACEHOLDER', 'Donation form goes here');
     document.querySelectorAll('.form-placeholder').forEach((box) => { box.textContent = words; });
@@ -190,9 +192,11 @@ function showDonateForm() {
   document.head.appendChild(script);
 
   document.querySelectorAll('.donate').forEach((spot) => {
-    const tag = document.createElement('givebutter-widget');
-    tag.id = widget;
-    spot.replaceChildren(tag);
+    spot.replaceChildren(...widgets.map((id) => {
+      const tag = document.createElement('givebutter-widget');
+      tag.id = id;
+      return tag;
+    }));
     spot.classList.add('has-widget');
   });
 }
