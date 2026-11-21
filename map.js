@@ -100,7 +100,7 @@ function buildRouteMap(slot) {
   const note = setting('ROUTE_NOTE', '');
   const legendAt = setting('MAP_LEGEND_AT', []);
   const numbered = stops.filter((s) => !s.start);
-  const legend = (title || numbered.length || note) ? `
+  const legend = setting('SHOW_MAP_KEY', true) && (title || numbered.length || note) ? `
     <div class="rm-legend${Array.isArray(legendAt) && legendAt.length === 2 ? '' : ' rm-below'}" style="${Array.isArray(legendAt) && legendAt.length === 2 ? pct(legendAt[0], legendAt[1]) : ''}">
       ${title ? `<p class="rm-legend-title">${esc(title)}</p>` : ''}
       ${numbered.length ? `<ol>${numbered.map((s) => `<li><span class="rm-dot">${s.number}</span>${esc(s.name)}</li>`).join('')}</ol>` : ''}

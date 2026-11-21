@@ -7,6 +7,7 @@
   --accent: #6abf4b;              /* settings.md: ACCENT_COLOR */
   --form-height: 720px;           /* settings.md: FORM_HEIGHT */
   --form-width: 480px;            /* settings.md: FORM_WIDTH */
+  --top-text-width: 300px;        /* settings.md: TOP_TEXT_WIDTH */
   --page-width: 1600px;           /* settings.md: PAGE_WIDTH */
   --side-space: 96px;             /* settings.md: PAGE_SIDE_SPACE */
   --text-size: 17px;              /* settings.md: TEXT_SIZE */
@@ -59,8 +60,8 @@ body {
 
 .row:last-child { margin-bottom: 0; }
 
-/* The top row: the map, text, then the form, which keeps its own width */
-.row-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, var(--form-width)); }
+/* The top row: the map takes what the text and the form leave */
+.row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--top-text-width)) minmax(0, var(--form-width)); }
 
 /* Text beside the picture has its own gap (settings.md: PICTURE_GAP) */
 .row-picture { column-gap: var(--picture-gap); }
@@ -451,7 +452,7 @@ h1 {
 
 /* Mid-size screens: no room for three across, so the top row's text goes
    under the map, with the form to their right */
-@media (max-width: 1300px) {
+@media (max-width: 1500px) {
   .row-top { grid-template-columns: minmax(0, 1fr) minmax(0, var(--form-width)); row-gap: 40px; }
   .row-top .donate { grid-column: 2; grid-row: 1 / span 2; }
 }

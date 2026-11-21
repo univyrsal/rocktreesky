@@ -83,6 +83,7 @@ function applySettings() {
   root.style.setProperty('--text', setting('TEXT_COLOR', '#22302B'));
   root.style.setProperty('--form-height', Math.max(400, setting('FORM_HEIGHT', 720)) + 'px');
   root.style.setProperty('--form-width', Math.max(280, setting('FORM_WIDTH', 480)) + 'px');
+  root.style.setProperty('--top-text-width', Math.max(120, setting('TOP_TEXT_WIDTH', 300)) + 'px');
 
   // The page's layout
   root.style.setProperty('--page-width', Math.max(600, setting('PAGE_WIDTH', 1600)) + 'px');

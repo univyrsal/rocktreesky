@@ -84,6 +84,12 @@ PAGE_WIDTH = 1600
 HIDE_SCROLLBAR = true
 ```
 
+How wide the text between the map and the form is, in pixels. The map gets the rest of the row. On screens narrower than about 1500 pixels there's no room for all three across, so this text goes under the map instead.
+
+```js
+TOP_TEXT_WIDTH = 300
+```
+
 The space between one row of sections and the next, and between the sections side by side in a row.
 
 ```js
@@ -214,6 +220,15 @@ ROUTE_COLOR = "#FDC500"
 STOP_COLOR = "#DC283C"
 START_COLOR = "#1E78FF"
 ROUTE_WIDTH = 4
+```
+
+The key: its title, the numbered list of stops, and a note under them.
+
+- `true` = the key is shown.
+- `false` = no key, just the map.
+
+```js
+SHOW_MAP_KEY = false
 ```
 
 The key's title and the note under its list of stops. `""` leaves either out.
