@@ -169,37 +169,31 @@ function showSections() {
   });
 }
 
-// The Zeffy donation form (settings.md: ZEFFY_FORM_LINK). Takes the form's
-// normal link or its embed link, and shows the embed version.
+// The Givebutter donation widget (settings.md: GIVEBUTTER_ACCOUNT and
+// GIVEBUTTER_WIDGET). Givebutter's script turns each <givebutter-widget>
+// tag into the form.
 function showDonateForm() {
-  const link = setting('ZEFFY_FORM_LINK', '').trim();
-  if (!link) {
+  const account = setting('GIVEBUTTER_ACCOUNT', '').trim();
+  // The widget's ID, or the whole <givebutter-widget id="..."> tag pasted in
+  const pasted = setting('GIVEBUTTER_WIDGET', '').trim();
+  const widget = (pasted.match(/id\s*=\s*["']?([\w-]+)/i) || [])[1] || (/^[\w-]+$/.test(pasted) ? pasted : '');
+  if (!account || !widget) {
+    if (pasted && !widget) console.warn('GIVEBUTTER_WIDGET in settings.md should be the widget\'s ID or its <givebutter-widget id="..."> tag; showing the placeholder instead.');
     // FORM_PLACEHOLDER: the words in the box until there's a form
-    const words = setting('FORM_PLACEHOLDER', 'Zeffy donation form goes here');
+    const words = setting('FORM_PLACEHOLDER', 'Donation form goes here');
     document.querySelectorAll('.form-placeholder').forEach((box) => { box.textContent = words; });
     return;
   }
-  let url = null;
-  try { url = new URL(link); } catch (err) { /* not a link */ }
-  if (!url || url.protocol !== 'https:' || !/(^|.)zeffy.com$/i.test(url.hostname)) {
-    console.warn('ZEFFY_FORM_LINK in settings.md should be a link starting https://www.zeffy.com/ ; showing the placeholder instead.');
-    return;
-  }
-  // The embed version has /embed/ before the form type, after any language
-  // part (www.zeffy.com/en-US/embed/donation-form/...)
-  const parts = url.pathname.split('/').filter(Boolean);
-  if (!parts.includes('embed')) parts.splice(/^[a-z]{2}(-[a-z]{2})?$/i.test(parts[0] || '') ? 1 : 0, 0, 'embed');
-  url.pathname = '/' + parts.join('/');
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://widgets.givebutter.com/latest.umd.cjs?acct=' + encodeURIComponent(account) + '&p=other';
+  document.head.appendChild(script);
 
   document.querySelectorAll('.donate').forEach((spot) => {
-    const frame = document.createElement('iframe');
-    frame.className = 'donate-form';
-    frame.title = 'Donation form powered by Zeffy';
-    frame.src = url.href;
-    frame.allow = 'payment';                    // Apple Pay / Google Pay
-    frame.setAttribute('allowpaymentrequest', ''); // the same, for older browsers
-    frame.setAttribute('allowtransparency', 'true');
-    spot.replaceChildren(frame);
+    const tag = document.createElement('givebutter-widget');
+    tag.id = widget;
+    spot.replaceChildren(tag);
+    spot.classList.add('has-widget');
   });
 }
 

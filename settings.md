@@ -162,19 +162,23 @@ SECTION_PICTURE_HEIGHT = 480
 
 ## The donation form
 
-The Zeffy donation form. In Zeffy, open the campaign's Share options and copy its link (or its embed code's link, either works), then paste it here between the quotes. `""` shows a placeholder box instead.
+The Givebutter donation form. Givebutter's embed code has two parts:
+
+- `GIVEBUTTER_ACCOUNT`: the `acct=` part of the `<script>` line (your Givebutter account, the same for every widget).
+- `GIVEBUTTER_WIDGET`: the widget's ID, from the `<givebutter-widget id="...">` line (in Givebutter: the campaign → Sharing → Widgets). You can paste that whole line here between the quotes. `""` shows a placeholder box instead.
 
 ```js
-ZEFFY_FORM_LINK = ""
+GIVEBUTTER_ACCOUNT = "ntw9fFA5tDQHtDt7"
+GIVEBUTTER_WIDGET = ""
 ```
 
-The words in the box while `ZEFFY_FORM_LINK` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
+The words in the placeholder box while `GIVEBUTTER_WIDGET` is `""`. `\n` starts a new line, like `"Donations open soon!\nCheck back in March."`.
 
 ```js
 FORM_PLACEHOLDER = "Donation payment form will go inside this box (with details such as funds raised etc) once I have the bank and routing number."
 ```
 
-How tall and wide the form is, in pixels. A form longer than this scrolls inside itself.
+How wide the form is, and how tall the placeholder box is, in pixels. (The Givebutter form sets its own height.)
 
 ```js
 FORM_HEIGHT = 700

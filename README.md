@@ -1,6 +1,6 @@
 # Rock Tree Sky fundraiser
 
-A single fundraising page hosted on GitHub Pages: an animated route map and a Zeffy donation form. (The progress thermometer is cut for now; it is in git history up to commit a370088.)
+A single fundraising page hosted on GitHub Pages: an animated route map and a Givebutter donation form. (The progress thermometer is cut for now; it is in git history up to commit a370088.)
 
 ## Files
 
@@ -13,7 +13,7 @@ A single fundraising page hosted on GitHub Pages: an animated route map and a Ze
 
 ## Setup
 
-1. **Zeffy form.** In Zeffy, open the campaign → Share, copy its link, and paste it into `ZEFFY_FORM_LINK` in `settings.md`. The page turns it into Zeffy's embedded form by itself.
+1. **Givebutter form.** Put the widget's ID (Givebutter: campaign → Sharing → Widgets) in `GIVEBUTTER_WIDGET` in `settings.md`; `GIVEBUTTER_ACCOUNT` is already set. The progress sync below is from the Zeffy days and is unused while the thermometer is cut.
 2. **API secrets.** In Zeffy go to Settings → Integrations → API Key → Generate (only an org admin can). In the GitHub repo go to Settings → Secrets and variables → Actions and add:
    - `ZEFFY_API_KEY`: the key. Keep it secret: it can read the organization's donor data, so it never goes in the page itself.
    - `ZEFFY_CAMPAIGN_ID`: the campaign's ID in the Zeffy API

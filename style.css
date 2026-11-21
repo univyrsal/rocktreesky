@@ -195,16 +195,11 @@ body {
   background: var(--box-color);
 }
 
-/* Donation form: FORM_HEIGHT tall, scrolling inside itself if it's longer */
+/* The donation form's spot: the placeholder box is FORM_HEIGHT tall; the
+   Givebutter widget sets its own height as it changes */
 .donate { height: var(--form-height); }
-
-.donate-form {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 12px;
-}
+.donate.has-widget { height: auto; }
+.donate givebutter-widget { display: block; width: 100%; }
 
 .form-placeholder {
   height: 100%;
